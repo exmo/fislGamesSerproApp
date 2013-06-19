@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PhoneGap</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<script src="js/jquery.js"></script>
+<script src="js/jquery.mobile-1.3.1.min.js"></script>
+<script src="js/jquery.jsonp-2.4.0.min.js"></script>
+<script src="js/db.js"></script>
+<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
+<script type="text/javascript" charset="utf-8" src="js/cordova-2.7.0.js"></script>
+<script type="text/javascript" charset="utf-8"src="js/barcodescanner.js"></script>
+
+</head>
+<body>
+	
+	<div data-role="page" id="pageCadastro">
+		<div data-role="header">
+			<h1>FISL GAMES</h1>
+		</div>
+		<div data-role="content">
+			<form id="formCadastro">
+				<div data-role="fieldcontain">
+					<label for="email">E-mail</label> <input type="email" id="email"
+						required>
+				</div>
+				<div data-role="fieldcontain">
+					<label for="nome">Nome</label> <input type="text" id="nome"
+						required>
+				</div>
+				<input type="button" id="cadastrar" value="Cadastrar" />
+			</form>
+
+
+		</div>
+		<div data-role="footer">
+			<h4>SERPRO</h4>
+		</div>
+	</div>
+	
+	<div data-role="page" id="pageLista">
+		<div data-role="header">
+			<h1>FISL GAMES</h1>
+		</div>
+		<div data-role="content">
+
+			<button id="btLerQRCode">Ler QR Code</button>
+
+			<ul data-role="listview" data-theme="g" id="listaQRCode" data-inset="true">
+			</ul>
+			
+			<label>Pontos Acumulados</label>
+			<p id="pontosAcumulados"></p>
+
+		</div>
+		<div data-role="footer">
+			<h4>SERPRO</h4>
+		</div>
+	</div>
+	
+
+	
+	
+	<div data-role="page" id="pageQRCodeDesafio">
+		<div data-role="header">
+			<h1>FISL GAMES</h1>
+		</div>
+		<div data-role="content">
+			
+			<form id="formDesafio">
+			    <input type="hidden" id="qrCodeId"/>
+				<p id="pergunta">xxxx</p>				
+				<input type="text" id="resposta" required>
+				<input type="button" id="responder" value="Responder"/>
+			</form>
+
+
+		</div>
+		<div data-role="footer">
+			<h4>SERPRO</h4>
+		</div>
+	</div>
+
+	<div data-role="page" id="pageQRCodeInfo">
+		<div data-role="header">
+			<h1>FISL GAMES</h1>
+		</div>
+		<div data-role="content">
+			<p id="textoInfo">xxxx</p>
+		</div>
+		<div data-role="footer">
+			<h4>SERPRO</h4>
+		</div>
+	</div>
+
+
+</body>
+
+<script>
+
+    ///var email="s@ssss";
+
+	$(function() {
+		
+		console.log(localStorage.email);	
+		
+
+		$("#cadastrar").click(submeterCadastro);
+
+		$("#btLerQRCode").click(scan);
+
+		$("#responder").click(enviarResposta);
+	})
+
+	
+	
+	function scan() {
+		window.plugins.barcodeScanner.scan(function(result) {
+			//var result = "SERPRO#DESAFIO#8#salashljashaskjh#777";
+			var itens = result.text.split("#");
+			
+			insertQRCode(itens[2],itens[3],itens[1],itens[4],exibirQRCodeInfo);	
+		
+			
+			
+		}, function(error) {
+			alert("Scanning failed: " + error);
+		});
+	}
+	
+	function exibirQRCodeInfo(id){
+		getQRCodeById(id,function(qrCode){
+			console.log(qrCode.tipo);
+			if(qrCode.tipo == 'DESAFIO'){
+				$("#pergunta").text(qrCode.texto);
+				$("#qrCodeId").val(qrCode.id);
+				$.mobile.changePage("#pageQRCodeDesafio", {
+	    			transition : 'fade'
+	    		});
+			}else if(qrCode.tipo == 'INFO'){
+				$("#textoInfo").text(qrCode.texto);
+				$.mobile.changePage("#pageQRCodeInfo", {
+	    			transition : 'fade'
+	    		});
+			}
+		});
+	}
+
+/* 	function foo(data) {
+		alert('foo');
+	} */
+	function enviarResposta(){
+		
+		var qrId = $("#qrCodeId").val();
+		$.jsonp({
+	    	"url": "http://localhost:9000/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
+	        "success": function(response, textStatus) {
+	        	if (response.status = "OK") {
+        			alert(response.msgRet);
+        			if (response.codRet == "OK") {
+	        			updateQRCode(qrId, true);
+					} else if (response.codRet == "ERRO-RE") {
+						updateQRCode(qrId, false);
+					}
+	        	}
+	        	$("#resposta").val("");
+	        	exibirTelaLista();
+	        },
+	        "error": function(xOptions, textStatus) {
+				alert("erro " + xOptions + " " + textStatus);
+	        }
+	      });
+	}
+	
+	$("#pageCadastro").on("pagebeforeshow", function(event){
+		if(localStorage.email){
+			$.mobile.changePage("#pageLista");
+		}
+	});
+	
+	$( "#pageLista" ).on( "pagebeforeshow", function( event ) { 
+		var total = 0;
+		$("#listaQRCode").empty();
+		listQRCode(function(lista){
+			$.each(lista,function(i,qr){	
+				var status = "";
+				if (qr.tipo == 'DESAFIO' && qr.acertou != null) {
+					if (qr.acertou == 'true') {
+						status = ' [ACERTOU]';
+						total+= qr.pontos;
+					} else { 
+						status = ' [ERROU]';
+					}
+				}  				
+				$("#listaQRCode").append("<li ><a onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+"    Valendo: "+qr.pontos+"  </a></li>").listview('refresh');
+			});
+			$("#pontosAcumulados").text(total);	
+		});			
+	} );
+	
+	function exibirTelaLista(){
+		$.mobile.changePage("#pageLista", {
+    		transition : 'fade'
+    	});	
+	}
+
+	function submeterCadastro() {
+	    $.jsonp({
+	    	"url": "http://localhost:9000/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"?callback=?",
+	        "success": function(response, textStatus) {
+	        	if (response.codRet == "ERRO") {
+	        		alert(response.msgRet);
+	        	} else {
+	        		
+	        		localStorage.nome = $("#nome").val();
+	        		localStorage.email = $("#email").val();
+		        	exibirTelaLista();
+	        	}
+	        },
+	        "error": function(xOptions, textStatus) {
+				alert("erro " + xOptions + " " + textStatus);
+	        }
+	      });
+	}
+</script>
+
+
+</html>
