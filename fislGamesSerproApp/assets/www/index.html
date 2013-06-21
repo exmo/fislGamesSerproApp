@@ -99,12 +99,11 @@
 
 <script>
 
-    ///var email="s@ssss";
+    var DOMINIO="http://fislgames-exmo.rhcloud.com";
 
 	$(function() {
 		
-		console.log(localStorage.email);	
-		
+		console.log(localStorage.email);		
 
 		$("#cadastrar").click(submeterCadastro);
 
@@ -113,17 +112,12 @@
 		$("#responder").click(enviarResposta);
 	})
 
-	
-	
+		
 	function scan() {
 		window.plugins.barcodeScanner.scan(function(result) {
 			//var result = "SERPRO#DESAFIO#8#salashljashaskjh#777";
-			var itens = result.text.split("#");
-			
-			insertQRCode(itens[2],itens[3],itens[1],itens[4],exibirQRCodeInfo);	
-		
-			
-			
+			var itens = result.text.split("#");			
+			insertQRCode(itens[2],itens[3],itens[1],itens[4],exibirQRCodeInfo);
 		}, function(error) {
 			alert("Scanning failed: " + error);
 		});
@@ -154,7 +148,7 @@
 		
 		var qrId = $("#qrCodeId").val();
 		$.jsonp({
-	    	"url": "http://localhost:9000/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
+	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
 	        "success": function(response, textStatus) {
 	        	if (response.status = "OK") {
         			alert(response.msgRet);
@@ -207,7 +201,7 @@
 
 	function submeterCadastro() {
 	    $.jsonp({
-	    	"url": "http://localhost:9000/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"?callback=?",
+	    	"url": DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"?callback=?",
 	        "success": function(response, textStatus) {
 	        	if (response.codRet == "ERRO") {
 	        		alert(response.msgRet);
