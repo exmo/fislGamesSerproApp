@@ -1,11 +1,14 @@
 
-var db = openDatabase ("Fisl4", "1.0", "Fisl", 65535);
+var db = openDatabase ("Fisl5", "1.0", "Fisl5", 65535);
 
 db.transaction (function (transaction) {
     var sql = "CREATE TABLE IF NOT EXISTS qrcode " +
         " (id INTEGER NOT NULL PRIMARY KEY, " +
         "texto varchar(1024), "+
         "tipo varchar(255), " +
+        "alternativaA varchar(255), " +
+        "alternativaB varchar(255), " +
+        "alternativaC varchar(255), " +
         "acertou boolean, " +
         "pontos INTEGER)"
         
@@ -24,10 +27,10 @@ db.transaction (function (transaction) {
 //    }, error);
 //  });
 
-function insertQRCode(id,texto, tipo, pontos, callback){
+function insertQRCode(id,texto, tipo, pontos,a,b,c, callback){
   db.transaction (function (transaction){
-    var sql = "insert into qrcode (id,texto,tipo,pontos) values (?,?,?,?)";
-    transaction.executeSql (sql, [id,texto,tipo,pontos], function (){
+    var sql = "insert into qrcode (id,texto,tipo,pontos,alternativaA,alternativaB,alternativaC) values (?,?,?,?,?,?,?)";
+    transaction.executeSql (sql, [id,texto,tipo,pontos,a,b,c], function (){
       console.log("qrcode salvo.")
       callback(id);
     
@@ -75,7 +78,7 @@ function getQRCodeById(id,callback){
 		    function (transaction, result){
 	    		if (result.rows.length == 1){
 	    			var row = result.rows.item (0);
-	    			callback({"id":row.id,"texto":row.texto,"tipo":row.tipo});
+	    			callback({"id":row.id,"texto":row.texto,"tipo":row.tipo,"alternativaA":row.alternativaA,"alternativaB":row.alternativaB,"alternativaC":row.alternativaC});
 	    		}
 		    }, error);	
 	});

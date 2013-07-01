@@ -7,7 +7,7 @@
 <script src="js/jquery.js"></script>
 <script src="js/jquery.mobile-1.3.1.min.js"></script>
 <script src="js/jquery.jsonp-2.4.0.min.js"></script>
-<script src="js/db.js"></script>
+
 <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
 <script type="text/javascript" charset="utf-8" src="js/cordova-2.7.0.js"></script>
 <script type="text/javascript" charset="utf-8"src="js/barcodescanner.js"></script>
@@ -22,19 +22,26 @@
 		<div data-role="content">
 			<form id="formCadastro">
 				<div data-role="fieldcontain">
-					<label for="email">E-mail</label> <input type="email" id="email"
-						required>
+					<label for="nome">Nome</label> 
+					<input type="text" id="nome" required>
 				</div>
+				
 				<div data-role="fieldcontain">
-					<label for="nome">Nome</label> <input type="text" id="nome"
-						required>
+					<label for="email">E-mail</label>
+					<input type="email" id="email" required>
 				</div>
-				<input type="button" id="cadastrar" value="Cadastrar" />
+				
+				<div data-role="fieldcontain">
+					<label for="telefone">Telefone</label> 
+					<input type="text" id="telefone" required>
+				</div>
+				
+				<input type="submit" id="btnCadastrar" value="Cadastrar" />
 			</form>
 
 
 		</div>
-		<div data-role="footer">
+		<div data-role="footer" data-position="fixed">
 			<h4>SERPRO</h4>
 		</div>
 	</div>
@@ -54,7 +61,7 @@
 			<p id="pontosAcumulados"></p>
 
 		</div>
-		<div data-role="footer">
+		<div data-role="footer" data-position="fixed">
 			<h4>SERPRO</h4>
 		</div>
 	</div>
@@ -68,28 +75,63 @@
 		</div>
 		<div data-role="content">
 			
-			<form id="formDesafio">
+			<form id="formDesafio" action="#">
 			    <input type="hidden" id="qrCodeId"/>
-				<p id="pergunta">xxxx</p>				
+				<div id="pergunta">xxxx</div>				
 				<input type="text" id="resposta" required>
-				<input type="button" id="responder" value="Responder"/>
+				<input type="submit" id="responder" value="Responder"/>
 			</form>
 
 
 		</div>
-		<div data-role="footer">
+		<div data-role="footer" data-position="fixed">
 			<h4>SERPRO</h4>
 		</div>
 	</div>
+	
+	<div data-role="page" id="pageQRCodeDesafioME">
+		<div data-role="header">
+			<h1>FISL GAMES</h1>
+		</div>
+		<div data-role="content">
+			
+			<form id="formDesafioME" action="#">
+			    <input type="hidden" id="qrCodeIdME"/>
+				<div id="perguntaME">xxxx</div>				
+				
+				<fieldset data-role="controlgroup">
+				<legend>Resposta:</legend>
+			     	<input type="radio" name="respostaME" id="alternativaA" value="1" checked="checked" />
+			     	<label id="alternativaALabel" for="alternativaA">Cat</label>
+			
+			     	<input type="radio" name="respostaME" id="alternativaB" value="2" />
+			     	<label id="alternativaBLabel" for="alternativaB">Cat</label>
+			     	
+			     	<input type="radio" name="respostaME" id="alternativaC" value="3"  />
+			     	<label id="alternativaCLabel" for="alternativaC">Cat</label>
+			
+				</fieldset>
+				
+				
+				<input type="submit" id="responder" value="Responder"/>
+			</form>
+
+
+		</div>
+		<div data-role="footer" data-position="fixed">
+			<h4>SERPRO</h4>
+		</div>
+	</div>
+	
 
 	<div data-role="page" id="pageQRCodeInfo">
 		<div data-role="header">
 			<h1>FISL GAMES</h1>
 		</div>
 		<div data-role="content">
-			<p id="textoInfo">xxxx</p>
+			<div id="textoInfo">xxxx</div>
 		</div>
-		<div data-role="footer">
+		<div data-role="footer" data-position="fixed">
 			<h4>SERPRO</h4>
 		</div>
 	</div>
@@ -101,35 +143,59 @@
 
     var DOMINIO="http://fislgames-exmo.rhcloud.com";
 
-	$(function() {
+    $(document).ready(function(){    		
+		   
+		console.log(localStorage.email);	
 		
-		console.log(localStorage.email);		
-
-		$("#cadastrar").click(submeterCadastro);
+		$("#formCadastro").submit(submeterCadastro);	
 
 		$("#btLerQRCode").click(scan);
 
-		$("#responder").click(enviarResposta);
-	})
+		$("#formDesafio").submit(enviarResposta);
+		$("#formDesafioME").submit(enviarRespostaME);
+	});
 
 		
 	function scan() {
-		window.plugins.barcodeScanner.scan(function(result) {
-			//var result = "SERPRO#DESAFIO#8#salashljashaskjh#777";
-			var itens = result.text.split("#");			
-			insertQRCode(itens[2],itens[3],itens[1],itens[4],exibirQRCodeInfo);
-		}, function(error) {
-			alert("Scanning failed: " + error);
-		});
+		//window.plugins.barcodeScanner.scan(function(result) {
+			var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
+			
+			//var itens = result.text.split("#");
+			
+			var id = itens[2];
+            var texto = itens[3];
+			var tipo = itens[1];
+			var pontos = itens[4];			
+			var a = itens[5];
+			var b = itens[6];
+			var c = itens[7];
+			
+			insertQRCode(id,texto,tipo,pontos,a,b,c,exibirQRCodeInfo);
+		//}, function(error) {
+		//	alert("Scanning failed: " + error);
+		//});
 	}
 	
 	function exibirQRCodeInfo(id){
+		navigator.notification.activityStart();
 		getQRCodeById(id,function(qrCode){
+			navigator.notification.activityStop();
 			console.log(qrCode.tipo);
-			if(qrCode.tipo == 'DESAFIO'){
+			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
 				$("#qrCodeId").val(qrCode.id);
 				$.mobile.changePage("#pageQRCodeDesafio", {
+	    			transition : 'fade'
+	    		});
+			}else if(qrCode.tipo == 'DESAFIOME' ){
+				$("#perguntaME").text(qrCode.texto);
+				$("#qrCodeIdME").val(qrCode.id);
+				
+				$("#alternativaALabel").text(qrCode.alternativaA);
+				$("#alternativaBLabel").text(qrCode.alternativaB);
+				$("#alternativaCLabel").text(qrCode.alternativaC);
+				
+				$.mobile.changePage("#pageQRCodeDesafioME", {
 	    			transition : 'fade'
 	    		});
 			}else if(qrCode.tipo == 'INFO'){
@@ -137,20 +203,21 @@
 				$.mobile.changePage("#pageQRCodeInfo", {
 	    			transition : 'fade'
 	    		});
+			}else if(qrCode.tipo == 'URL'){
+				window.open(encodeURI(qrCode.texto), '_system');
 			}
 		});
 	}
 
-/* 	function foo(data) {
-		alert('foo');
-	} */
+
 	function enviarResposta(){
-		
+		navigator.notification.activityStart();
 		var qrId = $("#qrCodeId").val();
 		$.jsonp({
 	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
 	        "success": function(response, textStatus) {
-	        	if (response.status = "OK") {
+	        	navigator.notification.activityStop();
+	        	if (response.status = "OK") {	        		
         			alert(response.msgRet);
         			if (response.codRet == "OK") {
 	        			updateQRCode(qrId, true);
@@ -162,9 +229,36 @@
 	        	exibirTelaLista();
 	        },
 	        "error": function(xOptions, textStatus) {
+	        	navigator.notification.activityStop();
 				alert("erro " + xOptions + " " + textStatus);
 	        }
-	      });
+	    });		
+	}
+	
+	function enviarRespostaME(){
+		navigator.notification.activityStart();
+		var qrId = $("#qrCodeIdME").val();		
+		var resposta = $('input[name=respostaME]:checked').val();
+		
+		$.jsonp({
+	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+resposta+"?callback=?",
+	        "success": function(response, textStatus) {
+	        	navigator.notification.activityStop();
+	        	if (response.status = "OK") {	        		
+        			alert(response.msgRet);
+        			if (response.codRet == "OK") {
+	        			updateQRCode(qrId, true);
+					} else if (response.codRet == "ERRO-RE") {
+						updateQRCode(qrId, false);
+					}
+	        	}
+	        	exibirTelaLista();
+	        },
+	        "error": function(xOptions, textStatus) {
+	        	navigator.notification.activityStop();
+				alert("erro " + xOptions + " " + textStatus);
+	        }
+	    });
 	}
 	
 	$("#pageCadastro").on("pagebeforeshow", function(event){
@@ -200,24 +294,30 @@
 	}
 
 	function submeterCadastro() {
+		navigator.notification.activityStart();	
+		
+		var url = DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"/"+$("#telefone").val()+"?callback=?";
+	
 	    $.jsonp({
-	    	"url": DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"?callback=?",
+	    	"url": url,
 	        "success": function(response, textStatus) {
+	        	navigator.notification.activityStop();
 	        	if (response.codRet == "ERRO") {
 	        		alert(response.msgRet);
-	        	} else {
-	        		
+	        	} else {		        		
 	        		localStorage.nome = $("#nome").val();
 	        		localStorage.email = $("#email").val();
+	        		localStorage.telefone = $("#telefone").val();
 		        	exibirTelaLista();
 	        	}
 	        },
 	        "error": function(xOptions, textStatus) {
+	        	navigator.notification.activityStop();
 				alert("erro " + xOptions + " " + textStatus);
 	        }
-	      });
+	    });
 	}
 </script>
-
+<script src="js/db.js"></script>
 
 </html>
