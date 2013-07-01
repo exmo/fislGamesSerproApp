@@ -36,7 +36,7 @@
 					<input type="text" id="telefone" required>
 				</div>
 				
-				<input type="submit" id="btnCadastrar" value="Cadastrar" />
+				<input type="button" id="btnCadastrar" value="Cadastrar" />
 			</form>
 
 
@@ -79,7 +79,7 @@
 			    <input type="hidden" id="qrCodeId"/>
 				<div id="pergunta">xxxx</div>				
 				<input type="text" id="resposta" required>
-				<input type="submit" id="responder" value="Responder"/>
+				<input type="button" id="responder" value="Responder"/>
 			</form>
 
 
@@ -101,19 +101,28 @@
 				
 				<fieldset data-role="controlgroup">
 				<legend>Resposta:</legend>
+			     	
+			     	<span id="alternativaASpan">
 			     	<input type="radio" name="respostaME" id="alternativaA" value="1" checked="checked" />
 			     	<label id="alternativaALabel" for="alternativaA">Cat</label>
-			
+					</span>
+					<span id="alternativaBSpan">
 			     	<input type="radio" name="respostaME" id="alternativaB" value="2" />
 			     	<label id="alternativaBLabel" for="alternativaB">Cat</label>
-			     	
+			     	</span>
+			     	<span id="alternativaCSpan">
 			     	<input type="radio" name="respostaME" id="alternativaC" value="3"  />
 			     	<label id="alternativaCLabel" for="alternativaC">Cat</label>
+			     	</span>
+			     	<span id="alternativaDSpan">
+			     	<input type="radio" name="respostaME" id="alternativaD" value="4"  />
+			     	<label id="alternativaDLabel" for="alternativaD">Cat</label>
+			     	</span>
 			
 				</fieldset>
 				
 				
-				<input type="submit" id="responder" value="Responder"/>
+				<input type="button" id="responderME" value="Responder"/>
 			</form>
 
 
@@ -140,47 +149,78 @@
 </body>
 
 <script>
-
+alternativaASpan
     var DOMINIO="http://fislgames-exmo.rhcloud.com";
 
-    $(document).ready(function(){    		
-		   
-		console.log(localStorage.email);	
+    $(document).ready(function(){ 
 		
-		$("#formCadastro").submit(submeterCadastro);	
+		$("#btnCadastrar").click(submeterCadastro);	
 
 		$("#btLerQRCode").click(scan);
 
-		$("#formDesafio").submit(enviarResposta);
-		$("#formDesafioME").submit(enviarRespostaME);
-	});
-
+		$("#responder").click(enviarResposta);
+		$("#responderME").click(enviarRespostaME);
+				
+						
+		var email = window.localStorage.getItem("email");
+		if(email != null && email != undefined && email != ""){
+			$.mobile.changePage("#pageLista");
+		}
 		
+		$("#pageLista").on("pagebeforeshow", function(event){ 
+			var total = 0;
+			$("#listaQRCode").empty();
+			listQRCode(function(lista){
+				$.each(lista,function(i,qr){	
+					var status = "";
+					if (qr.tipo == 'DESAFIO' && qr.acertou != null) {
+						if (qr.acertou == 'true') {
+							status = ' [ACERTOU]';
+							total+= qr.pontos;
+						} else { 
+							status = ' [ERROU]';
+						}
+					}  				
+					$("#listaQRCode").append("<li ><a onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+"    Valendo: "+qr.pontos+"  </a></li>").listview('refresh');
+				});
+				$("#pontosAcumulados").text(total);	
+			});			
+		} );
+			
+	});
+    
 	function scan() {
-		//window.plugins.barcodeScanner.scan(function(result) {
-			var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
+		navigator.notification.activityStart();
+		window.plugins.barcodeScanner.scan(function(result) {
+			navigator.notification.activityStop();
+			//var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
 			
-			//var itens = result.text.split("#");
+			var itens = result.text.split("#");			
 			
+			var tipo = itens[1];
 			var id = itens[2];
             var texto = itens[3];
-			var tipo = itens[1];
 			var pontos = itens[4];			
 			var a = itens[5];
 			var b = itens[6];
 			var c = itens[7];
+			var d = itens[8];
 			
-			insertQRCode(id,texto,tipo,pontos,a,b,c,exibirQRCodeInfo);
-		//}, function(error) {
-		//	alert("Scanning failed: " + error);
-		//});
+			insertQRCode(id,texto,tipo,pontos,a,b,c,d,exibirQRCodeInfo);
+		}, function(error) {
+			navigator.notification.activityStop();
+			alert("Scanning failed: " + error);
+		});
 	}
 	
 	function exibirQRCodeInfo(id){
 		navigator.notification.activityStart();
 		getQRCodeById(id,function(qrCode){
-			navigator.notification.activityStop();
+			
 			console.log(qrCode.tipo);
+			
+			navigator.notification.activityStop();
+			
 			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
 				$("#qrCodeId").val(qrCode.id);
@@ -194,7 +234,38 @@
 				$("#alternativaALabel").text(qrCode.alternativaA);
 				$("#alternativaBLabel").text(qrCode.alternativaB);
 				$("#alternativaCLabel").text(qrCode.alternativaC);
+				$("#alternativaDLabel").text(qrCode.alternativaD);
 				
+				$("#alternativaA").val(qrCode.alternativaA);
+				$("#alternativaB").val(qrCode.alternativaB);
+				$("#alternativaC").val(qrCode.alternativaC);
+				$("#alternativaD").val(qrCode.alternativaD);
+				
+				if(qrCode.alternativaA == "N/A"){
+					$("#alternativaASpan").hide();
+				}else{
+					$("#alternativaASpan").show();
+				}
+				
+				if(qrCode.alternativaB == "N/A"){
+					$("#alternativaBSpan").hide();
+				}else{
+					$("#alternativaBSpan").show();
+				}
+				
+				if(qrCode.alternativaC == "N/A"){
+					$("#alternativaCSpan").hide();
+				}else{
+					$("#alternativaCSpan").show();
+				}
+				
+				if(qrCode.alternativaD == "N/A"){
+					$("#alternativaDSpan").hide();
+				}else{
+					$("#alternativaDSpan").show();
+				}
+				
+								
 				$.mobile.changePage("#pageQRCodeDesafioME", {
 	    			transition : 'fade'
 	    		});
@@ -259,33 +330,8 @@
 				alert("erro " + xOptions + " " + textStatus);
 	        }
 	    });
-	}
+	}	
 	
-	$("#pageCadastro").on("pagebeforeshow", function(event){
-		if(localStorage.email){
-			$.mobile.changePage("#pageLista");
-		}
-	});
-	
-	$( "#pageLista" ).on( "pagebeforeshow", function( event ) { 
-		var total = 0;
-		$("#listaQRCode").empty();
-		listQRCode(function(lista){
-			$.each(lista,function(i,qr){	
-				var status = "";
-				if (qr.tipo == 'DESAFIO' && qr.acertou != null) {
-					if (qr.acertou == 'true') {
-						status = ' [ACERTOU]';
-						total+= qr.pontos;
-					} else { 
-						status = ' [ERROU]';
-					}
-				}  				
-				$("#listaQRCode").append("<li ><a onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+"    Valendo: "+qr.pontos+"  </a></li>").listview('refresh');
-			});
-			$("#pontosAcumulados").text(total);	
-		});			
-	} );
 	
 	function exibirTelaLista(){
 		$.mobile.changePage("#pageLista", {
@@ -304,16 +350,17 @@
 	        	navigator.notification.activityStop();
 	        	if (response.codRet == "ERRO") {
 	        		alert(response.msgRet);
-	        	} else {		        		
-	        		localStorage.nome = $("#nome").val();
-	        		localStorage.email = $("#email").val();
-	        		localStorage.telefone = $("#telefone").val();
-		        	exibirTelaLista();
-	        	}
+	        	} 
+	        	
+	        	window.localStorage.setItem("email",$("#email").val());
+        		window.localStorage.setItem("nome",$("#nome").val());
+        		window.localStorage.setItem("telefone",$("#telefone").val());
+	        	
+	        	exibirTelaLista();
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
-				alert("erro " + xOptions + " " + textStatus);
+	        	alert("Erro: "+textStatus);
 	        }
 	    });
 	}
