@@ -1,5 +1,5 @@
 
-var db = openDatabase ("Fisl6", "1.0", "Fisl6", 65535);
+var db = openDatabase ("Fisl14", "1.0", "Fisl14", 65535);
 
 db.transaction (function (transaction) {
     var sql = "CREATE TABLE IF NOT EXISTS qrcode " +
@@ -11,7 +11,9 @@ db.transaction (function (transaction) {
         "alternativaC varchar(255), " +
         "alternativaD varchar(255), " +
         "acertou boolean, " +
-        "pontos INTEGER)"
+        "pontos INTEGER)" +
+//        "pontos INTEGER, " +
+//				"time timestamp default (strftime('%s', 'now')))"
         
 
     transaction.executeSql (sql, undefined, function (){ 
@@ -19,15 +21,15 @@ db.transaction (function (transaction) {
       
     }, error);
   });
-
-//db.transaction (function (transaction) {
-//    var sql = "DELETE FROM qrcode WHERE ID = 2 "
-//    transaction.executeSql (sql, undefined, function (){ 
-//      console.log("id removido");
-//      
-//    }, error);
-//  });
-
+/*
+db.transaction (function (transaction) {
+    var sql = "DELETE FROM qrcode"
+    transaction.executeSql (sql, undefined, function (){ 
+      console.log("id removido");
+      
+    }, error);
+  });
+*/
 function insertQRCode(id,texto, tipo, pontos,a,b,c,d, callback){
   db.transaction (function (transaction){
     var sql = "insert into qrcode (id,texto,tipo,pontos,alternativaA,alternativaB,alternativaC,alternativaD) values (?,?,?,?,?,?,?,?)";
@@ -55,7 +57,8 @@ function updateQRCode(id, acertou){
 function listQRCode(callback){
 	var resultado = new Array();
 	db.transaction (function (transaction){
-	    var sql = "SELECT * FROM qrcode";	
+	    //var sql = "SELECT * FROM qrcode ORDER BY time DESC";	
+			var sql = "SELECT * FROM qrcode";	
 	    transaction.executeSql (sql, undefined, 
 		    function (transaction, result){
 	    		if (result.rows.length){

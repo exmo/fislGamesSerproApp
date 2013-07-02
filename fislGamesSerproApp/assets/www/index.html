@@ -7,16 +7,15 @@
 <script src="js/jquery.js"></script>
 <script src="js/jquery.mobile-1.3.1.min.js"></script>
 <script src="js/jquery.jsonp-2.4.0.min.js"></script>
-
+<script src="js/fastclick.js"></script>
+<script src="js/cordova-2.7.0.js"></script>
+<script src="js/barcodescanner.js"></script>
 <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
-<script type="text/javascript" charset="utf-8" src="js/cordova-2.7.0.js"></script>
-<script type="text/javascript" charset="utf-8"src="js/barcodescanner.js"></script>
-
 </head>
 <body>
 	
 	<div data-role="page" id="pageCadastro">
-		<div data-role="header">
+		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
 		<div data-role="content">
@@ -41,13 +40,13 @@
 
 
 		</div>
-		<div data-role="footer" data-position="fixed">
-			<h4>SERPRO</h4>
+		<div data-role="footer" data-theme="b" data-position="fixed">
+			<h4>FISL 2013</h4>
 		</div>
 	</div>
 	
 	<div data-role="page" id="pageLista">
-		<div data-role="header">
+		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
 		<div data-role="content">
@@ -56,21 +55,17 @@
 
 			<ul data-role="listview" data-theme="g" id="listaQRCode" data-inset="true">
 			</ul>
-			
-			<label>Pontos Acumulados</label>
-			<p id="pontosAcumulados"></p>
-
 		</div>
-		<div data-role="footer" data-position="fixed">
-			<h4>SERPRO</h4>
+		<div data-role="footer" data-theme="b" data-position="fixed">
+			<h4>FISL 2013</h4>
 		</div>
 	</div>
 	
 
 	
 	
-	<div data-role="page" id="pageQRCodeDesafio">
-		<div data-role="header">
+	<div data-role="page" id="pageQRCodeDesafio" data-add-back-btn="true"  data-back-btn-text="Voltar">
+		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
 		<div data-role="content">
@@ -84,39 +79,39 @@
 
 
 		</div>
-		<div data-role="footer" data-position="fixed">
-			<h4>SERPRO</h4>
+		<div data-role="footer" data-theme="b" data-position="fixed">
+			<h4>FISL 2013</h4>
 		</div>
 	</div>
 	
-	<div data-role="page" id="pageQRCodeDesafioME">
-		<div data-role="header">
+	<div data-role="page" id="pageQRCodeDesafioME" data-add-back-btn="true"  data-back-btn-text="Voltar">
+		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
 		<div data-role="content">
 			
 			<form id="formDesafioME" action="#">
 			    <input type="hidden" id="qrCodeIdME"/>
-				<div id="perguntaME">xxxx</div>				
+				<div id="perguntaME" style="white-space:normal">xxxx</div>				
 				
 				<fieldset data-role="controlgroup">
 				<legend>Resposta:</legend>
 			     	
 			     	<span id="alternativaASpan">
 			     	<input type="radio" name="respostaME" id="alternativaA" value="1" checked="checked" />
-			     	<label id="alternativaALabel" for="alternativaA">Cat</label>
+			     	<label id="alternativaALabel" for="alternativaA" style="white-space:normal">Cat</label>
 					</span>
 					<span id="alternativaBSpan">
 			     	<input type="radio" name="respostaME" id="alternativaB" value="2" />
-			     	<label id="alternativaBLabel" for="alternativaB">Cat</label>
+			     	<label id="alternativaBLabel" for="alternativaB" style="white-space:normal">Cat</label>
 			     	</span>
 			     	<span id="alternativaCSpan">
 			     	<input type="radio" name="respostaME" id="alternativaC" value="3"  />
-			     	<label id="alternativaCLabel" for="alternativaC">Cat</label>
+			     	<label id="alternativaCLabel" for="alternativaC" style="white-space:normal">Cat</label>
 			     	</span>
 			     	<span id="alternativaDSpan">
 			     	<input type="radio" name="respostaME" id="alternativaD" value="4"  />
-			     	<label id="alternativaDLabel" for="alternativaD">Cat</label>
+			     	<label id="alternativaDLabel" for="alternativaD" style="white-space:normal">Cat</label>
 			     	</span>
 			
 				</fieldset>
@@ -127,21 +122,21 @@
 
 
 		</div>
-		<div data-role="footer" data-position="fixed">
-			<h4>SERPRO</h4>
+		<div data-role="footer" data-theme="b" data-position="fixed">
+			<h4>FISL 2013</h4>
 		</div>
 	</div>
 	
 
-	<div data-role="page" id="pageQRCodeInfo">
-		<div data-role="header">
+	<div data-role="page" data-theme="b" id="pageQRCodeInfo" data-add-back-btn="true"  data-back-btn-text="Voltar">
+		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
 		<div data-role="content">
 			<div id="textoInfo">xxxx</div>
 		</div>
-		<div data-role="footer" data-position="fixed">
-			<h4>SERPRO</h4>
+		<div data-role="footer" data-position="fixed" data-theme="b">
+			<h4>FISL 2013</h4>
 		</div>
 	</div>
 
@@ -149,52 +144,77 @@
 </body>
 
 <script>
-alternativaASpan
-    var DOMINIO="http://fislgames-exmo.rhcloud.com";
 
-    $(document).ready(function(){ 
-		
+	var DOMINIO="http://fislgames-exmo.rhcloud.com";
+
+	$(document).ready(function(){ 
 		$("#btnCadastrar").click(submeterCadastro);	
-
 		$("#btLerQRCode").click(scan);
-
 		$("#responder").click(enviarResposta);
 		$("#responderME").click(enviarRespostaME);
-				
-						
+
 		var email = window.localStorage.getItem("email");
+
 		if(email != null && email != undefined && email != ""){
-			$.mobile.changePage("#pageLista");
+			montaLista();
+			//$.mobile.changePage("#pageLista");
+			changePage("pageLista");
 		}
-		
+
+		/*
 		$("#pageLista").on("pagebeforeshow", function(event){ 
-			var total = 0;
-			$("#listaQRCode").empty();
-			listQRCode(function(lista){
-				$.each(lista,function(i,qr){	
-					var status = "";
-					if (qr.tipo == 'DESAFIO' && qr.acertou != null) {
-						if (qr.acertou == 'true') {
-							status = ' [ACERTOU]';
-							total+= qr.pontos;
-						} else { 
-							status = ' [ERROU]';
-						}
-					}  				
-					$("#listaQRCode").append("<li ><a onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+"    Valendo: "+qr.pontos+"  </a></li>").listview('refresh');
-				});
-				$("#pontosAcumulados").text(total);	
-			});			
-		} );
-			
+			alert('vaimostrarlista');
+			montaLista();
+		});
+		*/
 	});
-    
+
+	function montaLista() {
+		var total = 0;
+
+		var email = window.localStorage.getItem("email");
+		var nome = window.localStorage.getItem("nome");
+
+		$("#listaQRCode").empty();
+		listQRCode(function(lista){
+			$.each(lista,function(i,qr){	
+				var status = "";
+				var pontos = "";
+				var bubbleStyle = "";
+				if (qr.tipo == 'DESAFIO' || qr.tipo == 'DESAFIOME') {
+					pontos = qr.pontos;
+					if (qr.acertou != null) {
+						if (qr.acertou == 'true') { // desafio resposta certa: verde
+							total += pontos; 
+							bubbleStyle = "style=\"background: #00FF00;\"";
+						} else { // desafio resposta errada: vermelho
+							bubbleStyle = "style=\"color: #FFFFFF; background: #FF0000;\"";
+						}
+					}
+				} else { // info, url: azul
+					bubbleStyle = "style=\"color: #FFFFFF; background: #0000FF;\"";
+					pontos = qr.tipo.toLowerCase();
+				} 				
+				var bubblePontos = "<span class=\"ui-li-count\""+bubbleStyle+">"+pontos+"</span>";
+				$("#listaQRCode").append("<li style=\"white-space:normal\"><a class=\"changepage\" onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+bubblePontos+"</a></li>").listview('refresh');
+			});
+			$("#listaQRCode").append("<li data-theme=\"c\" data-role=\"list-divider\">&nbsp;"+nome+"&nbsp;&lt;"+email+"&gt;"+"<span class=\"ui-li-count\">Pontos: "+total+"</span></li>").listview('refresh');
+		});			
+	}    
+
+	function changePage(page) {
+//alert('mudando para pagina '+page);
+		$.mobile.changePage("#" + page, {
+  			transition : 'fade'
+  		});
+	}
+
 	function scan() {
 		navigator.notification.activityStart();
 		window.plugins.barcodeScanner.scan(function(result) {
 			navigator.notification.activityStop();
 			//var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
-			
+
 			var itens = result.text.split("#");			
 			
 			var tipo = itens[1];
@@ -213,20 +233,45 @@ alternativaASpan
 		});
 	}
 	
+	function scanweb() {
+
+//		navigator.notification.activityStart();
+//		window.plugins.barcodeScanner.scan(function(result) {
+//			navigator.notification.activityStop();
+			//var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
+			var itens = "SERPRO#DESAFIOME#23#Qual o nome da escola virtual que o Serpro oferece conteúdos livres para as comunidades?#30#Escola de Inclusão Sociodigital #N/A#Escola de Inclusão Digital#Rede Brasil Digital".split("#")
+			
+//			var itens = result.text.split("#");			
+			
+			var tipo = itens[1];
+			var id = itens[2];
+            var texto = itens[3];
+			var pontos = itens[4];			
+			var a = itens[5];
+			var b = itens[6];
+			var c = itens[7];
+			var d = itens[8];
+			
+			insertQRCode(id,texto,tipo,pontos,a,b,c,d,exibirQRCodeInfo);
+//		}, function(error) {
+//			navigator.notification.activityStop();
+//			alert("Scanning failed: " + error);
+//		});
+	}
+
 	function exibirQRCodeInfo(id){
-		navigator.notification.activityStart();
+//		navigator.notification.activityStart();
+
 		getQRCodeById(id,function(qrCode){
 			
 			console.log(qrCode.tipo);
 			
-			navigator.notification.activityStop();
+//			navigator.notification.activityStop();
 			
 			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
 				$("#qrCodeId").val(qrCode.id);
-				$.mobile.changePage("#pageQRCodeDesafio", {
-	    			transition : 'fade'
-	    		});
+				changePage("pageQRCodeDesafio");
 			}else if(qrCode.tipo == 'DESAFIOME' ){
 				$("#perguntaME").text(qrCode.texto);
 				$("#qrCodeIdME").val(qrCode.id);
@@ -264,16 +309,11 @@ alternativaASpan
 				}else{
 					$("#alternativaDSpan").show();
 				}
-				
 								
-				$.mobile.changePage("#pageQRCodeDesafioME", {
-	    			transition : 'fade'
-	    		});
+				changePage("pageQRCodeDesafioME");
 			}else if(qrCode.tipo == 'INFO'){
 				$("#textoInfo").text(qrCode.texto);
-				$.mobile.changePage("#pageQRCodeInfo", {
-	    			transition : 'fade'
-	    		});
+				changePage("pageQRCodeInfo");
 			}else if(qrCode.tipo == 'URL'){
 				window.open(encodeURI(qrCode.texto), '_system');
 			}
@@ -334,9 +374,7 @@ alternativaASpan
 	
 	
 	function exibirTelaLista(){
-		$.mobile.changePage("#pageLista", {
-    		transition : 'fade'
-    	});	
+		changePage("pageLista");	
 	}
 
 	function submeterCadastro() {
@@ -350,13 +388,12 @@ alternativaASpan
 	        	navigator.notification.activityStop();
 	        	if (response.codRet == "ERRO") {
 	        		alert(response.msgRet);
-	        	} 
-	        	
-	        	window.localStorage.setItem("email",$("#email").val());
-        		window.localStorage.setItem("nome",$("#nome").val());
-        		window.localStorage.setItem("telefone",$("#telefone").val());
-	        	
-	        	exibirTelaLista();
+	        	} else {
+			      	window.localStorage.setItem("email",$("#email").val());
+		      		window.localStorage.setItem("nome",$("#nome").val());
+		      		window.localStorage.setItem("telefone",$("#telefone").val());
+						}			      	
+		      	exibirTelaLista();
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
