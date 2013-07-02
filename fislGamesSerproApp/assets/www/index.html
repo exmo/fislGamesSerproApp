@@ -91,10 +91,9 @@
 		<div data-role="content">
 			
 			<form id="formDesafioME" action="#">
-			    <input type="hidden" id="qrCodeIdME"/>
-				<div id="perguntaME" style="white-space:normal">xxxx</div>				
+			    <input type="hidden" id="qrCodeIdME"/>				
 				
-				<fieldset data-role="controlgroup">
+				<fieldset data-role="controlgroup" id="grupoRadioButton"> 
 				<legend>Resposta:</legend>
 			     	
 			     	<span id="alternativaASpan">
@@ -203,17 +202,16 @@
 	}    
 
 	function changePage(page) {
-//alert('mudando para pagina '+page);
 		$.mobile.changePage("#" + page, {
   			transition : 'fade'
   		});
 	}
 
 	function scan() {
-		navigator.notification.activityStart();
+		
 		window.plugins.barcodeScanner.scan(function(result) {
-			navigator.notification.activityStop();
-			//var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
+			
+			//var itens = "SERPRO#DESAFIOME#14#Quantos órgãos de Governo participam do Comitê de Implementação de Software Livre do Governo Federal? #50#mais de 150#N/A#entre 100 e 149#entre 50 e 99".split("#");
 
 			var itens = result.text.split("#");			
 			
@@ -233,84 +231,49 @@
 		});
 	}
 	
-	function scanweb() {
-
-//		navigator.notification.activityStart();
-//		window.plugins.barcodeScanner.scan(function(result) {
-//			navigator.notification.activityStop();
-			//var itens = "SERPRO#DESAFIOME#25#teste robson#3#b#a#c".split("#");
-			var itens = "SERPRO#DESAFIOME#23#Qual o nome da escola virtual que o Serpro oferece conte√∫dos livres para as comunidades?#30#Escola de Inclus√£o Sociodigital #N/A#Escola de Inclus√£o Digital#Rede Brasil Digital".split("#")
-			
-//			var itens = result.text.split("#");			
-			
-			var tipo = itens[1];
-			var id = itens[2];
-            var texto = itens[3];
-			var pontos = itens[4];			
-			var a = itens[5];
-			var b = itens[6];
-			var c = itens[7];
-			var d = itens[8];
-			
-			insertQRCode(id,texto,tipo,pontos,a,b,c,d,exibirQRCodeInfo);
-//		}, function(error) {
-//			navigator.notification.activityStop();
-//			alert("Scanning failed: " + error);
-//		});
-	}
-
 	function exibirQRCodeInfo(id){
-//		navigator.notification.activityStart();
 
 		getQRCodeById(id,function(qrCode){
-			
-			console.log(qrCode.tipo);
-			
-//			navigator.notification.activityStop();
 			
 			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
 				$("#qrCodeId").val(qrCode.id);
 				changePage("pageQRCodeDesafio");
 			}else if(qrCode.tipo == 'DESAFIOME' ){
-				$("#perguntaME").text(qrCode.texto);
+			
+				//$("#perguntaME").text(qrCode.texto);
+				
 				$("#qrCodeIdME").val(qrCode.id);
 				
-				$("#alternativaALabel").text(qrCode.alternativaA);
-				$("#alternativaBLabel").text(qrCode.alternativaB);
-				$("#alternativaCLabel").text(qrCode.alternativaC);
-				$("#alternativaDLabel").text(qrCode.alternativaD);
+				var alternativasContainer = $("#formDesafioME");
+				var fieldset = $("#grupoRadioButton");
+				fieldset.html("");
+				fieldset.append( $('<legend>').html(qrCode.texto) );
 				
-				$("#alternativaA").val(qrCode.alternativaA);
-				$("#alternativaB").val(qrCode.alternativaB);
-				$("#alternativaC").val(qrCode.alternativaC);
-				$("#alternativaD").val(qrCode.alternativaD);
-				
-				if(qrCode.alternativaA == "N/A"){
-					$("#alternativaASpan").hide();
-				}else{
-					$("#alternativaASpan").show();
+				if(qrCode.alternativaA != "N/A"){
+					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaA).attr('id', 'alternativaA') );
+            		fieldset.append( $('<label>').attr('for', 'alternativaA').html(qrCode.alternativaA) );
 				}
 				
-				if(qrCode.alternativaB == "N/A"){
-					$("#alternativaBSpan").hide();
-				}else{
-					$("#alternativaBSpan").show();
+				if(qrCode.alternativaB != "N/A"){
+					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaB).attr('id', 'alternativaB') );
+            		fieldset.append( $('<label>').attr('for', 'alternativaB').html(qrCode.alternativaB) );
 				}
 				
-				if(qrCode.alternativaC == "N/A"){
-					$("#alternativaCSpan").hide();
-				}else{
-					$("#alternativaCSpan").show();
+				if(qrCode.alternativaC != "N/A"){
+					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaC).attr('id', 'alternativaC') );
+            		fieldset.append( $('<label>').attr('for', 'alternativaC').html(qrCode.alternativaC) );
 				}
 				
-				if(qrCode.alternativaD == "N/A"){
-					$("#alternativaDSpan").hide();
-				}else{
-					$("#alternativaDSpan").show();
+				if(qrCode.alternativaD != "N/A"){
+					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaD).attr('id', 'alternativaD') );
+            		fieldset.append( $('<label>').attr('for', 'alternativaD').html(qrCode.alternativaD) );
 				}
-								
+				
+				alternativasContainer.trigger('create');
+				
 				changePage("pageQRCodeDesafioME");
+				
 			}else if(qrCode.tipo == 'INFO'){
 				$("#textoInfo").text(qrCode.texto);
 				changePage("pageQRCodeInfo");
@@ -346,6 +309,8 @@
 	    });		
 	}
 	
+	
+	
 	function enviarRespostaME(){
 		navigator.notification.activityStart();
 		var qrId = $("#qrCodeIdME").val();		
@@ -374,6 +339,9 @@
 	
 	
 	function exibirTelaLista(){
+	
+		montaLista();
+	
 		changePage("pageLista");	
 	}
 

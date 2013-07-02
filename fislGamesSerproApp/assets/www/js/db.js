@@ -11,7 +11,7 @@ db.transaction (function (transaction) {
         "alternativaC varchar(255), " +
         "alternativaD varchar(255), " +
         "acertou boolean, " +
-        "pontos INTEGER)" +
+        "pontos INTEGER)" 
 //        "pontos INTEGER, " +
 //				"time timestamp default (strftime('%s', 'now')))"
         
