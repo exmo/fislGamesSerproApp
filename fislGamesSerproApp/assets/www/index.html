@@ -12,6 +12,14 @@
 <script src="js/barcodescanner.js"></script>
 <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
 
+<!- FastClick -->
+<script type="application/javascript" src="js/fastclick.js"></script> 
+<script type="application/javascript">
+	window.addEventListener('load', function () {
+		FastClick.attach(document.body);
+	}, false);
+</script>
+
 <style type="text/css" >
 .header {position:fixed;z-index:10;top:0;width:100%}
 .content {padding:45px 15px}
@@ -20,6 +28,19 @@
 
 </head>
 <body>
+	
+	<div data-role="page" id="pageLista">
+		<div data-role="header" data-theme="b">
+			<h1>SERPRO GAME</h1>
+		</div>
+		<div data-role="content">
+
+			<button id="btLerQRCode">Ler QR Code</button>
+
+			<ul data-role="listview" data-theme="g" id="listaQRCode" data-inset="true">
+			</ul>
+		</div>
+	</div>
 	
 	<div data-role="page" id="pageCadastro">
 		<div data-role="header" data-theme="b">
@@ -39,70 +60,48 @@
 				
 				<div data-role="fieldcontain">
 					<label for="telefone">Telefone</label> 
-					<input type="text" id="telefone" required>
+					<input type="tel" id="telefone" required>
 				</div>
 				
 				<input type="button" id="btnCadastrar" value="Cadastrar" />
 			</form>
-
-
-		</div>
-		<div data-role="footer" data-theme="b"  class="footer">
-			<h4>FISL 2013</h4>
 		</div>
 	</div>
-	
-	<div data-role="page" id="pageLista">
+
+	<div data-role="page" id="pageQRCodeInfo" data-theme="b" data-close-btn="none">
 		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
-		</div>
+		</div>	
 		<div data-role="content">
-
-			<button id="btLerQRCode">Ler QR Code</button>
-
-			<ul data-role="listview" data-theme="g" id="listaQRCode" data-inset="true">
-			</ul>
-		</div>
-		<div data-role="footer" data-theme="b" class="footer">
-			<h4>FISL 2013</h4>
+			<div id="textoInfo">xxxx</div>
+			<a href="#pageLista" data-role="button" data-rel="back" data-theme="c">Fechar</a>
 		</div>
 	</div>
-	
 
-	
-	
-	<div data-role="page" id="pageQRCodeDesafio" data-add-back-btn="true"  data-back-btn-text="Voltar">
+	<div data-role="page" id="pageQRCodeDesafio" data-theme="b" data-close-btn="none">
 		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
-		</div>
+		</div>	
 		<div data-role="content">
-			
 			<form id="formDesafio" action="#">
 			    <input type="hidden" id="qrCodeId"/>
 				<div id="pergunta">xxxx</div>				
 				<input type="text" id="resposta" required>
-				<input type="button" id="responder" value="Responder"/>
+				<input type="button" data-theme="b" id="responder" value="Responder"/>
+				<a href="#pageLista" data-role="button" data-rel="back" data-theme="c">Fechar</a>				
 			</form>
-
-
-		</div>
-		<div data-role="footer" data-theme="b"  class="footer">
-			<h4>FISL 2013</h4>
 		</div>
 	</div>
-	
-	<div data-role="page" id="pageQRCodeDesafioME" data-add-back-btn="true"  data-back-btn-text="Voltar">
+		
+	<div data-role="page" id="pageQRCodeDesafioME" data-theme="b" data-close-btn="none">
 		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
-		</div>
+		</div>	
 		<div data-role="content">
-			
 			<form id="formDesafioME" action="#">
 			    <input type="hidden" id="qrCodeIdME"/>				
-				
 				<fieldset data-role="controlgroup" id="grupoRadioButton"> 
 				<legend>Resposta:</legend>
-			     	
 			     	<span id="alternativaASpan">
 			     	<input type="radio" name="respostaME" id="alternativaA" value="1" checked="checked" />
 			     	<label id="alternativaALabel" for="alternativaA" style="white-space:normal">Cat</label>
@@ -119,33 +118,12 @@
 			     	<input type="radio" name="respostaME" id="alternativaD" value="4"  />
 			     	<label id="alternativaDLabel" for="alternativaD" style="white-space:normal">Cat</label>
 			     	</span>
-			
 				</fieldset>
-				
-				
-				<input type="button" id="responderME" value="Responder"/>
+				<input type="button" data-theme="b" id="responderME" value="Responder"/>
+				<a href="#pageLista" data-role="button" data-rel="back" data-theme="c">Fechar</a>	
 			</form>
-
-
-		</div>
-		<div data-role="footer" data-theme="b"  class="footer">
-			<h4>FISL 2013</h4>
 		</div>
 	</div>
-	
-
-	<div data-role="page" data-theme="b" id="pageQRCodeInfo" data-add-back-btn="true"  data-back-btn-text="Voltar">
-		<div data-role="header" data-theme="b">
-			<h1>SERPRO GAME</h1>
-		</div>
-		<div data-role="content">
-			<div id="textoInfo">xxxx</div>
-		</div>
-		<div data-role="footer" data-theme="b"  class="footer">
-			<h4>FISL 2013</h4>
-		</div>
-	</div>
-
 
 </body>
 
@@ -154,35 +132,60 @@
 	var DOMINIO="http://fislgames-exmo.rhcloud.com";
 
 	$(document).ready(function(){ 
+	
+		console.log("document ready");
+		
 		$("#btnCadastrar").click(submeterCadastro);	
 		$("#btLerQRCode").click(scan);
 		$("#responder").click(enviarResposta);
 		$("#responderME").click(enviarRespostaME);
 
-		var email = window.localStorage.getItem("email");
-
-		if(email != null && email != undefined && email != ""){
-			montaLista();
-			//$.mobile.changePage("#pageLista");
-			changePage("pageLista");
-		}
-
-		/*
 		$("#pageLista").on("pagebeforeshow", function(event){ 
-			alert('vaimostrarlista');
-			montaLista();
-		});
-		*/
+			//executa da primeira vez, quando usuario ainda nao tem cadastro
+			console.log("pagelista pagebeforeshow 1");
+			if(!hasValue(lsGet("email"))){
+				changePage("pageCadastro");
+			}
+		});	
+				
+		$("#pageCadastro").on("pagebeforeshow", function(event){ 
+			$("#email").val(lsGet("email"));
+			$("#nome").val(lsGet("nome"));
+			$("#telefone").val(lsGet("telefone"));
+		});		
 	});
+		
+	$("#pageLista").on("pagebeforeshow", function(event){ 
+		//executa sempre
+		console.log("pagelista pagebeforeshow 2");
+		if(!hasValue(lsGet("email"))){
+			changePage("pageCadastro");
+		} else {
+			montaLista();
+		}
+	});	
+					
+	function hasValue(field) {
+		return(field != null && field != undefined && field != "");
+	}
+		
+	function lsGet(item) {
+		return window.localStorage.getItem(item);
+	}
+	
+	function lsSet(item,val) {
+		return window.localStorage.setItem(item,val);
+	}	
 
 	function montaLista() {
 		var total = 0;
 
-		var email = window.localStorage.getItem("email");
-		var nome = window.localStorage.getItem("nome");
+		var email = lsGet("email");
+		var nome = lsGet("nome");
 
 		$("#listaQRCode").empty();
 		listQRCode(function(lista){
+			var bubblePontosStyle = "";
 			$.each(lista,function(i,qr){	
 				var status = "";
 				var pontos = "";
@@ -193,6 +196,7 @@
 						if (qr.acertou == 'true') { // desafio resposta certa: verde
 							total += pontos; 
 							bubbleStyle = "style=\"background: #00FF00;\"";
+							bubblePontosStyle = bubbleStyle;
 						} else { // desafio resposta errada: vermelho
 							bubbleStyle = "style=\"color: #FFFFFF; background: #FF0000;\"";
 						}
@@ -204,7 +208,7 @@
 				var bubblePontos = "<span class=\"ui-li-count\""+bubbleStyle+">"+pontos+"</span>";
 				$("#listaQRCode").append("<li style=\"white-space:normal\"><a class=\"changepage\" onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+bubblePontos+"</a></li>").listview('refresh');
 			});
-			$("#listaQRCode").append("<li data-theme=\"c\" data-role=\"list-divider\">&nbsp;"+nome+"&nbsp;&lt;"+email+"&gt;"+"<span class=\"ui-li-count\">Pontos: "+total+"</span></li>").listview('refresh');
+			$("#listaQRCode").append("<li data-theme=\"c\" data-role=\"list-divider\">&nbsp;"+nome+"&nbsp;&lt;"+email+"&gt;"+"<span class=\"ui-li-count\""+bubblePontosStyle+">Pontos: "+total+"</span></li>").listview('refresh');
 		});			
 	}    
 
@@ -213,14 +217,31 @@
   			transition : 'fade'
   		});
 	}
+	
+	function showDialog(page) {
+		$.mobile.changePage("#" + page, { 
+			role: "dialog",
+			transiction: "flip" 
+		});	
+	}
 
 	function scan() {
 		
 		window.plugins.barcodeScanner.scan(function(result) {
-			
-			//var itens = "SERPRO#DESAFIOME#14#Quantos �rg�os de Governo participam do Comit� de Implementa��o de Software Livre do Governo Federal? #50#mais de 150#N/A#entre 100 e 149#entre 50 e 99".split("#");
 
-			var itens = result.text.split("#");			
+			var texto = result.text;
+//			var texto = "SERPRO#INFO#9#Quer ganhar 50 pontos? Compareça à palestra Mobilidade e GEO que começa às 11h na área Casos de sucesso sala 713. Não esqueça de pegar o material na saída para responder a pergunta e saber qual é o próximo desafio. #0";
+
+			if (!hasValue(texto)) {
+				return false;
+			}
+			 			
+			if (!texto.match("^SERPRO")) {
+				alert("Este QR-Code não pertence ao GAME SERPRO");
+				return false;
+			}
+
+			var itens = texto.split("#");
 			
 			var tipo = itens[1];
 			var id = itens[2];
@@ -245,7 +266,7 @@
 			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
 				$("#qrCodeId").val(qrCode.id);
-				changePage("pageQRCodeDesafio");
+				showDialog("pageQRCodeDesafio");
 			}else if(qrCode.tipo == 'DESAFIOME' ){
 			
 				//$("#perguntaME").text(qrCode.texto);
@@ -279,13 +300,14 @@
 				
 				alternativasContainer.trigger('create');
 				
-				changePage("pageQRCodeDesafioME");
+				showDialog("pageQRCodeDesafioME");
 				
 			}else if(qrCode.tipo == 'INFO'){
 				$("#textoInfo").text(qrCode.texto);
-				changePage("pageQRCodeInfo");
+				showDialog("pageQRCodeInfo");
 			}else if(qrCode.tipo == 'URL'){
 				window.open(encodeURI(qrCode.texto), '_system');
+				montaLista(); //recarrega a lista
 			}
 		});
 	}
@@ -307,7 +329,7 @@
 					}
 	        	}
 	        	$("#resposta").val("");
-	        	exibirTelaLista();
+	        	changePage("pageLista");
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
@@ -335,7 +357,7 @@
 						updateQRCode(qrId, false);
 					}
 	        	}
-	        	exibirTelaLista();
+	        	changePage("pageLista");
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
@@ -344,15 +366,17 @@
 	    });
 	}	
 	
-	
-	function exibirTelaLista(){
-	
-		montaLista();
-	
-		changePage("pageLista");	
-	}
-
 	function submeterCadastro() {
+		if ($("#nome").val() == "" || $("#email").val() == "" || $("#telefone").val() == "") {
+			alert("Preencha todas as informações");
+			return false;
+		}
+		
+		if (!validateEmail($("#email").val())) {
+			alert("Informe um endereço de e-mail válido");
+			return false;
+		}
+			
 		navigator.notification.activityStart();	
 		
 		var url = DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"/"+$("#telefone").val()+"?callback=?";
@@ -364,11 +388,11 @@
 	        	if (response.codRet == "ERRO") {
 	        		alert(response.msgRet);
 	        	} else {
-			      	window.localStorage.setItem("email",$("#email").val());
-		      		window.localStorage.setItem("nome",$("#nome").val());
-		      		window.localStorage.setItem("telefone",$("#telefone").val());
-						}			      	
-		      	exibirTelaLista();
+			      	lsSet("email",$("#email").val());
+		      		lsSet("nome",$("#nome").val());
+		      		lsSet("telefone",$("#telefone").val());
+				}			      	
+		      	changePage("pageLista");
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
@@ -376,6 +400,11 @@
 	        }
 	    });
 	}
+	
+	function validateEmail(email) { 
+	    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA	-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(email);
+	} 	
 </script>
 <script src="js/db.js"></script>
 

@@ -11,9 +11,9 @@ db.transaction (function (transaction) {
         "alternativaC varchar(255), " +
         "alternativaD varchar(255), " +
         "acertou boolean, " +
-        "pontos INTEGER)" 
-//        "pontos INTEGER, " +
-//				"time timestamp default (strftime('%s', 'now')))"
+//        "pontos INTEGER)" 
+        "pontos INTEGER, " +
+				"time timestamp default (strftime('%s', 'now')))"
         
 
     transaction.executeSql (sql, undefined, function (){ 
@@ -21,15 +21,30 @@ db.transaction (function (transaction) {
       
     }, error);
   });
-/*
-db.transaction (function (transaction) {
+
+//limpaLS();  
+//limpaDB();
+
+function limpaLS() {
+	console.log("Limpando LocalStorage!");
+	
+	window.localStorage.removeItem("email");
+	window.localStorage.removeItem("nome");
+	window.localStorage.removeItem("telefone");
+}
+
+function limpaDB() {
+	console.log("Limpando Banco de Dados!");
+
+	db.transaction (function (transaction) {
     var sql = "DELETE FROM qrcode"
     transaction.executeSql (sql, undefined, function (){ 
       console.log("id removido");
       
     }, error);
   });
-*/
+}
+
 function insertQRCode(id,texto, tipo, pontos,a,b,c,d, callback){
   db.transaction (function (transaction){
     var sql = "insert into qrcode (id,texto,tipo,pontos,alternativaA,alternativaB,alternativaC,alternativaD) values (?,?,?,?,?,?,?,?)";
@@ -57,8 +72,8 @@ function updateQRCode(id, acertou){
 function listQRCode(callback){
 	var resultado = new Array();
 	db.transaction (function (transaction){
-	    //var sql = "SELECT * FROM qrcode ORDER BY time DESC";	
-			var sql = "SELECT * FROM qrcode";	
+	    var sql = "SELECT * FROM qrcode ORDER BY time DESC";	
+		//	var sql = "SELECT * FROM qrcode";	
 	    transaction.executeSql (sql, undefined, 
 		    function (transaction, result){
 	    		if (result.rows.length){
