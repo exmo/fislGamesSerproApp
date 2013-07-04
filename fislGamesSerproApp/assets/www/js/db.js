@@ -11,9 +11,8 @@ db.transaction (function (transaction) {
         "alternativaC varchar(255), " +
         "alternativaD varchar(255), " +
         "acertou boolean, " +
-//        "pontos INTEGER)" 
         "pontos INTEGER, " +
-				"time timestamp default (strftime('%s', 'now')))"
+		"time timestamp default (strftime('%s', 'now')))"
         
 
     transaction.executeSql (sql, undefined, function (){ 
@@ -73,7 +72,6 @@ function listQRCode(callback){
 	var resultado = new Array();
 	db.transaction (function (transaction){
 	    var sql = "SELECT * FROM qrcode ORDER BY time DESC";	
-		//	var sql = "SELECT * FROM qrcode";	
 	    transaction.executeSql (sql, undefined, 
 		    function (transaction, result){
 	    		if (result.rows.length){

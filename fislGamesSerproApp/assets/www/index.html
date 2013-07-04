@@ -129,7 +129,9 @@
 
 <script>
 
-	var DOMINIO="http://fislgames-exmo.rhcloud.com";
+	var DOMINIO = "http://fislgames-exmo.rhcloud.com";
+	var MSG_SEM_INTERNET  = "Sem conexão internet." +
+							"Verifique sua configuração de rede e tente novamente mais tarde."
 
 	$(document).ready(function(){ 
 	
@@ -166,7 +168,7 @@
 	});	
 					
 	function hasValue(field) {
-		return(field != null && field != undefined && field != "");
+		return(field != null && field != undefined && $.trim(field) != "");
 	}
 		
 	function lsGet(item) {
@@ -255,8 +257,9 @@
 			insertQRCode(id,texto,tipo,pontos,a,b,c,d,exibirQRCodeInfo);
 		}, function(error) {
 			navigator.notification.activityStop();
-			alert("Scanning failed: " + error);
+			alert("Ocorreu um erro na leitura do QR-Code. Tenta novamente.");
 		});
+    	navigator.notification.activityStop();
 	}
 	
 	function exibirQRCodeInfo(id){
@@ -312,9 +315,28 @@
 		});
 	}
 
+	function checkInternet() {
+	    var networkState = navigator.network.connection.type;
 
+	    if (networkState == Connection.NONE) {
+	    	alert(MSG_SEM_INTERNET);
+	    	return false;
+	    } 
+		return true;	    	
+	}
+	
 	function enviarResposta(){
+		if (!hasValue($("#resposta").val())) {
+			alert("Preencha a resposta!");
+			return false;
+		}
+
+		if (!checkInternet()) {
+			return false;	
+		}
+
 		navigator.notification.activityStart();
+
 		var qrId = $("#qrCodeId").val();
 		$.jsonp({
 	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
@@ -333,17 +355,26 @@
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
-				alert("erro " + xOptions + " " + textStatus);
+	        	alert("Ocorreu um erro no Envio da Resposta. " + MSG_SEM_INTERNET);
 	        }
-	    });		
+	    });
 	}
 	
 	
 	
 	function enviarRespostaME(){
+		var resposta = $('input[name=respostaME]:checked').val();
+		if (!hasValue(resposta)) {
+			alert("Escolha uma das alternativas!");
+			return false;
+		}
+		
+		if (!checkInternet()) {
+			return false;	
+		}
+		
 		navigator.notification.activityStart();
 		var qrId = $("#qrCodeIdME").val();		
-		var resposta = $('input[name=respostaME]:checked').val();
 		
 		$.jsonp({
 	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+resposta+"?callback=?",
@@ -361,7 +392,7 @@
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
-				alert("erro " + xOptions + " " + textStatus);
+				alert("Ocorreu um erro no Envio da Resposta " + MSG_SEM_INTERNET);
 	        }
 	    });
 	}	
@@ -376,7 +407,11 @@
 			alert("Informe um endereço de e-mail válido");
 			return false;
 		}
-			
+
+		if (!checkInternet()) {
+			return false;	
+		}
+		
 		navigator.notification.activityStart();	
 		
 		var url = DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"/"+$("#telefone").val()+"?callback=?";
@@ -396,7 +431,7 @@
 	        },
 	        "error": function(xOptions, textStatus) {
 	        	navigator.notification.activityStop();
-	        	alert("Erro: "+textStatus);
+	        	alert("Ocorreu um erro no Cadastramento do Usuário. " + MSG_SEM_INTERNET);
 	        }
 	    });
 	}
