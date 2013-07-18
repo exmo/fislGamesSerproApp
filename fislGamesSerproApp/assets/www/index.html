@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PhoneGap</title>
+<title>SERPRO GAMES</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <script src="js/jquery.js"></script>
 <script src="js/jquery.mobile-1.3.1.min.js"></script>
 <script src="js/jquery.jsonp-2.4.0.min.js"></script>
 <script src="js/fastclick.js"></script>
-<script src="js/cordova-2.7.0.js"></script>
+<script src="js/cordova.js"></script>
 <script src="js/barcodescanner.js"></script>
 <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
 
@@ -28,7 +28,7 @@
 
 </head>
 <body>
-	
+    	
 	<div data-role="page" id="pageLista">
 		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
@@ -124,31 +124,29 @@
 			</form>
 		</div>
 	</div>
-
+    
 </body>
 
 <script>
 
 	var DOMINIO = "http://fislgames-exmo.rhcloud.com";
+    //var DOMINIO = "http://192.168.0.162:9000";//alert("MODO DESENVOLVIMENTO");
+    
 	var MSG_SEM_INTERNET  = "Sem conexão internet." +
 							"Verifique sua configuração de rede e tente novamente mais tarde."
 
-	$(document).ready(function(){ 
-	
+	$(document).ready(function(){
 		console.log("document ready");
-		
 		$("#btnCadastrar").click(submeterCadastro);	
 		$("#btLerQRCode").click(scan);
 		$("#responder").click(enviarResposta);
 		$("#responderME").click(enviarRespostaME);
-
-		$("#pageLista").on("pagebeforeshow", function(event){ 
-			//executa da primeira vez, quando usuario ainda nao tem cadastro
-			console.log("pagelista pagebeforeshow 1");
-			if(!hasValue(lsGet("email"))){
-				changePage("pageCadastro");
-			}
-		});	
+//		$("#pageLista").on("pagebeforeshow", function(event){ 
+//			//executa da primeira vez, quando usuario ainda nao tem cadastro
+//			if(!hasValue(lsGet("email"))){
+//				changePage("pageCadastro");
+//			}
+//		});	
 				
 		$("#pageCadastro").on("pagebeforeshow", function(event){ 
 			$("#email").val(lsGet("email"));
@@ -159,7 +157,6 @@
 		
 	$("#pageLista").on("pagebeforeshow", function(event){ 
 		//executa sempre
-		console.log("pagelista pagebeforeshow 2");
 		if(!hasValue(lsGet("email"))){
 			changePage("pageCadastro");
 		} else {
@@ -181,10 +178,8 @@
 
 	function montaLista() {
 		var total = 0;
-
 		var email = lsGet("email");
 		var nome = lsGet("nome");
-
 		$("#listaQRCode").empty();
 		listQRCode(function(lista){
 			var bubblePontosStyle = "";
@@ -243,37 +238,69 @@
 				return false;
 			}
 
-			var itens = texto.split("#");
-			
-			var tipo = itens[1];
-			var id = itens[2];
-            var texto = itens[3];
-			var pontos = itens[4];			
-			var a = itens[5];
-			var b = itens[6];
-			var c = itens[7];
-			var d = itens[8];
-			
-			insertQRCode(id,texto,tipo,pontos,a,b,c,d,exibirQRCodeInfo);
+            salvarQRCode(texto);
+                                           
 		}, function(error) {
-			navigator.notification.activityStop();
+            console.log(error);
 			alert("Ocorreu um erro na leitura do QR-Code. Tenta novamente.");
 		});
-    	navigator.notification.activityStop();
+        $.mobile.loading('hide');
 	}
+    
+    function salvarQRCode(textoQRCode){
+        var itens = textoQRCode.split("#");
+        var tipo = itens[1];
+        var id = itens[2];
+        
+        if(tipo == "JSON"){
+            obterQRCode(id);
+        }else{
+            var texto = itens[3];
+            var pontos = itens[4];
+            var alternativas = textoQRCode.substring(textoQRCode.indexOf(itens[6]));
+            insertQRCode(id,texto,tipo,pontos,alternativas,exibirQRCodeInfo);
+        }
+    }
+    
+    function obterQRCode(id){
+        $.mobile.loading('show');
+        $.jsonp({
+                "url": DOMINIO+"/qrcode/json/"+id+"?callback=?",
+                "success": function(response, textStatus) {
+                    console.log("Obteve o JSON para o qrcode: "+id);
+                    console.log("Response: "+response);
+                    $.mobile.loading('hide');
+                    if (response.status == "ERROR") {
+                        alert(response.msgRet);
+                    }else{
+                        var tipo = response.tipo;
+                        var texto = response.texto;
+                        var pontos = response.pontuacao;
+                        var alternativas = response.alternativas;
+                        insertQRCode(id,texto,tipo,pontos,alternativas,exibirQRCodeInfo);                
+                    }
+	        	},
+                "error": function(xOptions, textStatus) {
+                    console.log("Falha ao tentar obter o QRCode");
+                    $.mobile.loading('hide');
+                    alert("Ocorreu um erro na leitura do QR-Code. " + MSG_SEM_INTERNET);
+                }
+        });
+    }
+    
 	
 	function exibirQRCodeInfo(id){
-
+        console.log("Obtendo o QRCode: "+id);
 		getQRCodeById(id,function(qrCode){
 			
+            console.log("Montando a tela para exibir o QRCode: "+qrCode.tipo);
+                      
 			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
 				$("#qrCodeId").val(qrCode.id);
 				showDialog("pageQRCodeDesafio");
 			}else if(qrCode.tipo == 'DESAFIOME' ){
-			
-				//$("#perguntaME").text(qrCode.texto);
-				
+
 				$("#qrCodeIdME").val(qrCode.id);
 				
 				var alternativasContainer = $("#formDesafioME");
@@ -281,28 +308,22 @@
 				fieldset.html("");
 				fieldset.append( $('<legend>').html(qrCode.texto) );
 				
-				if(qrCode.alternativaA != "N/A"){
-					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaA).attr('id', 'alternativaA') );
-            		fieldset.append( $('<label>').attr('for', 'alternativaA').html(qrCode.alternativaA) );
-				}
-				
-				if(qrCode.alternativaB != "N/A"){
-					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaB).attr('id', 'alternativaB') );
-            		fieldset.append( $('<label>').attr('for', 'alternativaB').html(qrCode.alternativaB) );
-				}
-				
-				if(qrCode.alternativaC != "N/A"){
-					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaC).attr('id', 'alternativaC') );
-            		fieldset.append( $('<label>').attr('for', 'alternativaC').html(qrCode.alternativaC) );
-				}
-				
-				if(qrCode.alternativaD != "N/A"){
-					fieldset.append( $('<input type="radio" />').attr('name', 'respostaME').attr('value', qrCode.alternativaD).attr('id', 'alternativaD') );
-            		fieldset.append( $('<label>').attr('for', 'alternativaD').html(qrCode.alternativaD) );
-				}
+                var alternativas = qrCode.alternativas.split("#");
+                alternativas = shuffle(alternativas);
+                for (var i = 0; i < alternativas.length; i++) {
+                      console.log("Alternativa: "+alternativas[i]);
+                      if(alternativas[i].length>0){
+                        fieldset.append( $('<input type="radio" />')
+                                      .attr('name', 'respostaME')
+                                      .attr('value', alternativas[i])
+                                      .attr('id', 'alternativa'+i) );
+                        fieldset.append( $('<label>')
+                                      .attr('for', 'alternativa'+i)
+                                      .html(alternativas[i]) );
+                      }
+                }
 				
 				alternativasContainer.trigger('create');
-				
 				showDialog("pageQRCodeDesafioME");
 				
 			}else if(qrCode.tipo == 'INFO'){
@@ -316,9 +337,15 @@
 	}
 
 	function checkInternet() {
-	    var networkState = navigator.network.connection.type;
+		var networkState = null;
+		
+		if(navigator.connection){
+			networkState = navigator.connection.type;	
+		}else{
+			networkState = navigator.network.connection.type;
+		}
 
-	    if (networkState == Connection.NONE) {
+	    if (networkState == 'undefined' || networkState == Connection.NONE) {
 	    	alert(MSG_SEM_INTERNET);
 	    	return false;
 	    } 
@@ -335,13 +362,13 @@
 			return false;	
 		}
 
-		navigator.notification.activityStart();
+		 $.mobile.loading('show');
 
 		var qrId = $("#qrCodeId").val();
 		$.jsonp({
 	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
 	        "success": function(response, textStatus) {
-	        	navigator.notification.activityStop();
+	        	 $.mobile.loading('hide');
 	        	if (response.status = "OK") {	        		
         			alert(response.msgRet);
         			if (response.codRet == "OK") {
@@ -354,18 +381,16 @@
 	        	changePage("pageLista");
 	        },
 	        "error": function(xOptions, textStatus) {
-	        	navigator.notification.activityStop();
+	        	 $.mobile.loading('hide');
 	        	alert("Ocorreu um erro no Envio da Resposta. " + MSG_SEM_INTERNET);
 	        }
 	    });
 	}
 	
-	
-	
 	function enviarRespostaME(){
 		var resposta = $('input[name=respostaME]:checked').val();
 		if (!hasValue(resposta)) {
-			alert("Escolha uma das alternativas!");
+			alert("Escolha uma alternativa");
 			return false;
 		}
 		
@@ -373,13 +398,13 @@
 			return false;	
 		}
 		
-		navigator.notification.activityStart();
+        $.mobile.loading('show');
 		var qrId = $("#qrCodeIdME").val();		
 		
 		$.jsonp({
 	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+resposta+"?callback=?",
 	        "success": function(response, textStatus) {
-	        	navigator.notification.activityStop();
+	        	 $.mobile.loading('hide');
 	        	if (response.status = "OK") {	        		
         			alert(response.msgRet);
         			if (response.codRet == "OK") {
@@ -391,13 +416,14 @@
 	        	changePage("pageLista");
 	        },
 	        "error": function(xOptions, textStatus) {
-	        	navigator.notification.activityStop();
+                $.mobile.loading('hide');
 				alert("Ocorreu um erro no Envio da Resposta " + MSG_SEM_INTERNET);
 	        }
 	    });
 	}	
 	
 	function submeterCadastro() {
+        console.log("Submetendo cadastro");
 		if ($("#nome").val() == "" || $("#email").val() == "" || $("#telefone").val() == "") {
 			alert("Preencha todas as informações");
 			return false;
@@ -411,15 +437,17 @@
 		if (!checkInternet()) {
 			return false;	
 		}
-		
-		navigator.notification.activityStart();	
+        
+        $.mobile.loading('show');
 		
 		var url = DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"/"+$("#telefone").val()+"?callback=?";
 	
+        console.log(url);
+        
 	    $.jsonp({
 	    	"url": url,
 	        "success": function(response, textStatus) {
-	        	navigator.notification.activityStop();
+                $.mobile.loading('hide');
 	        	if (response.codRet == "ERRO") {
 	        		alert(response.msgRet);
 	        	} else {
@@ -430,8 +458,10 @@
 		      	changePage("pageLista");
 	        },
 	        "error": function(xOptions, textStatus) {
-	        	navigator.notification.activityStop();
-	        	alert("Ocorreu um erro no Cadastramento do Usuário. " + MSG_SEM_INTERNET);
+                $.mobile.loading('hide');
+	        	console.log(textStatus);
+                alert("Ocorreu um erro no Cadastramento do Usuário. " + MSG_SEM_INTERNET);
+                
 	        }
 	    });
 	}
@@ -439,7 +469,13 @@
 	function validateEmail(email) { 
 	    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA	-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	    return re.test(email);
-	} 	
+	}
+                      
+    function shuffle(o){ //v1.0
+        for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+            return o;
+    }
+                      
 </script>
 <script src="js/db.js"></script>
 

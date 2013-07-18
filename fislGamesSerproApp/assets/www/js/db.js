@@ -6,10 +6,7 @@ db.transaction (function (transaction) {
         " (id INTEGER NOT NULL PRIMARY KEY, " +
         "texto varchar(1024), "+
         "tipo varchar(255), " +
-        "alternativaA varchar(255), " +
-        "alternativaB varchar(255), " +
-        "alternativaC varchar(255), " +
-        "alternativaD varchar(255), " +
+        "alternativas varchar(1024), " +
         "acertou boolean, " +
         "pontos INTEGER, " +
 		"time timestamp default (strftime('%s', 'now')))"
@@ -44,15 +41,16 @@ function limpaDB() {
   });
 }
 
-function insertQRCode(id,texto, tipo, pontos,a,b,c,d, callback){
+function insertQRCode(id,texto, tipo, pontos,a, callback){
   db.transaction (function (transaction){
-    var sql = "insert into qrcode (id,texto,tipo,pontos,alternativaA,alternativaB,alternativaC,alternativaD) values (?,?,?,?,?,?,?,?)";
-    transaction.executeSql (sql, [id,texto,tipo,pontos,a,b,c,d], function (){
+    var sql = "insert into qrcode (id,texto,tipo,pontos,alternativas) values (?,?,?,?,?)";
+    transaction.executeSql (sql, [id,texto,tipo,pontos,a], function (){
       console.log("qrcode salvo.")
       callback(id);
     
-    }, function(){
-    	console.log("qrcode pr√©-existente")
+    }, function(t,x){
+        console.log(x.message)
+    	console.log("qrcode pré-existente")
         callback(id);
     });
   });
@@ -93,20 +91,21 @@ function getQRCodeById(id,callback){
 	    var sql = "SELECT * FROM qrcode where id=?";	
 	    transaction.executeSql (sql, [id], 
 		    function (transaction, result){
+                console.log("Trouxe resultado da query do getQRCodeById")
+                                
 	    		if (result.rows.length == 1){
 	    			var row = result.rows.item (0);
+                    console.log("Mandando o resultado para o callback");
 	    			callback({
 	    				"id":row.id,
 	    				"texto":row.texto,
 	    				"tipo":row.tipo,
-	    				"alternativaA":row.alternativaA,
-	    				"alternativaB":row.alternativaB,
-	    				"alternativaC":row.alternativaC,
-	    				"alternativaD":row.alternativaD});
+	    				"alternativas":row.alternativas});
 	    		}else{
 	    			callback(null);
 	    		}
-		    }, error);	
+                                
+		    }, error);
 	});
 }
 
