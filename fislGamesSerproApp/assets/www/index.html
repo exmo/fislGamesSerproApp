@@ -11,6 +11,7 @@
 <script src="js/cordova.js"></script>
 <script src="js/barcodescanner.js"></script>
 <link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
+<link rel="stylesheet" href="css/custom.css">
 
 <!- FastClick -->
 <script type="application/javascript" src="js/fastclick.js"></script> 
@@ -18,149 +19,248 @@
 	window.addEventListener('load', function () {
 		FastClick.attach(document.body);
 	}, false);
+    
 </script>
 
 <style type="text/css" >
-.header {position:fixed;z-index:10;top:0;width:100%}
-.content {padding:45px 15px}
-.footer {position:fixed;z-index:10;bottom:0;width:100%}
+    
+
+    
 </style>
 
 </head>
 <body>
+    
     	
-	<div data-role="page" id="pageLista">
+	<div data-role="page" id="pageHome">
 		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
-		<div data-role="content">
+        <div data-role="navbar" id="navbar" class="navbar-black">
+            <ul>
+                <li id="linkTab1" class="tabLink" data-tab-class="tab1"><img src="img/qrcode_ico.png"></li>
+                <li id="linkTab2" class="tabLink" data-tab-class="tab2"><img src="img/info_ico.png" ></li>
+                <li id="linkTab3" class="tabLink" data-tab-class="tab3"><img src="img/trofeu_ico.png" ></li>
+                <li id="linkTab4" class="tabLink" data-tab-class="tab4"><img src="img/user_ico.png" ></li>
+                <li id="linkTab5" class="pontos" data-tab-class="tab5" style="text-align: center;">
+                    
+                    <b id="pontuacao" class="pontuacao">300</b><br/><i class="texto-pontuacao">pontos</i>
+                </li>
+            </ul>
+        </div>
+        
+		<div data-role="content" class="tab-content">
+			
+                <div id="tab1" class="tab1 tab">
+                    <div data-role="content" style="vertical-align: middle; ">
+                        <a id="btLerQRCode" data-role="button" data-theme="qr-button">LER QRCODE</a>
+                    </div>
 
-			<button id="btLerQRCode">Ler QR Code</button>
+                    <div class="area-texto">
+                        <div class="texto-qrcode" style="font-size: 14px;">
+                            <b style="font-size: 18px;">Ajuda?</b>
+                            <p>Aponte a lente da câmera de seu smartphone para o folder ou um banner que possui o QR-Code que você queira ler.
+                            </p>
+                            
+                            <p>
+                            Caso o aplicativo retorne algum erro na leitura do QR Code, procure um dos responsáveis pelo jogo que eles irão te ajudar a encontrar uma solução.
+                            </p>
+                        </div>
+                    </div>
 
-			<ul data-role="listview" data-theme="g" id="listaQRCode" data-inset="true">
-			</ul>
+                    
+                </div>
+                <div id="tab2" class="tab2 tab ui-screen-hidden">
+                    <div data-role="content" style="color: #1a1a1a;">
+                        <b style="font-size: 18px;">Perguntas e respostas</b>
+                        <p style="font-size: 15px;">Para reler uma dica ou responder uma pergunta em aberto, clique na mesma</p>
+                    </div>
+                        <table id="tabelaQRcode" class="tabelaQRcode">
+                        </table>
+                    
+                </div>
+                <div id="tab3" class="tab3 tab ui-screen-hidden" style="background-color: #d6d6d6; align: center;">
+                    <div data-role="content">
+                    <b style="font-size: 18px;">Ranking Geral</b>
+                    <table id="tabelaRanking" class="tabelaRanking">    
+                    </table>
+                    <br /> <br />
+                    <table  class="tabelaVoce">
+                        <tr>
+                            <td class="posicao"><span id="rankingPosicao">1</span>º</td>
+                            <td class="nome">Você</td>
+                            <td class="total" id="rankingPontuacao">100</td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>
+                <div id="tab4" class="tab4 tab ui-screen-hidden">
+                    <div data-role="content">
+                        <table width="98%">
+                            <tr>
+                                <td width="50%" style="border-right: 1px solid #cccccc;">
+                                    <b style="font-size: 16px;">
+                                        <span id="spanNome"></span><br />
+                                        <span id="spanSobrenome"></span><br />
+                                    </b>
+                                    <span id="spanEmail" style="font-size: 9px; color: #cccccc;"></span>
+                                </td>
+                                <td style="text-align: right;"><img src="img/trofeu.png" /></td>
+                                <td width="80px" style="text-align: right;">
+                                    <b style="font-size: 29px;"><span id="spanPosicao"></span>º</b><br />
+                                    <span style="font-size: 13px; color: #cccccc;">no ranking</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="width: 100%; height: 100%; background-color: #e6e6e6; border-top: 1px solid #cccccc;">
+                        <table width="98%" style="padding: 25px 15px 20px 15px;">
+                            <tr>
+                                <td height="39px">
+                                    <b style="font-size: 21px;">
+                                        Você no jogo:
+                                    </b>
+                                </td>
+                                <td width="80px" style="text-align: right;">
+                                    <b style="color: #b3b3b3;font-size: 24px;"><span id="spanPercentual"></span>%</b><br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <table id="tabelaProgresso" class="tabelaProgresso" width="100%">
+                                        <tr style="height: 39px;">
+                                            <td width=200 style="border: 2px solid silver;padding:none">
+                                                <hr id="percentualProgresso" style="margin: 0 0 0 0;background-color:#87deaa;height:39px; border:none;" align="left" width=0% />
+                                            </td>
+                                        </tr>
+                                        
+                                        
+
+                                        
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: right;">
+                                    <span style="color: #cccccc;">progresso</span>
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <div height="100%"></div>
+                        <div style="border-top: 1px solid #cccccc;">
+                            <table style="padding: 25px 15px 20px 15px;">
+                                <tr>
+                                    <td width="80%" style="text-align: right;font-size: 17px; color:#808080">Compartilhar conquistas:</td>
+                                    <td width="40px" style="text-align: center;"><img src="img/facebook.png" /></td>
+                                    <td width="40px" style="text-align: center;"><img src="img/twitter.png" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab5" class="tab5 tab ui-screen-hidden">
+                    <div data-role="content">
+                        <b id="tipo" style="font-size: 18px;"></b>
+                        <p id="pergunta" style="font-size: 15px;">
+                        </p>
+                        <input type="hidden" value="" id="qrCodeId" />
+                        <input type="text" id="resposta"/>
+                        <fieldset data-role="controlgroup" id="grupoRadioButton">
+                        </fieldset>
+                    
+                        <a id="responder" data-role="button" data-theme="qr-button">Responder</a>
+                        <a id="fechar" data-role="button" data-theme="qr-button">Fechar</a>
+                    </div>
+                </div>
+
 		</div>
 	</div>
 	
-	<div data-role="page" id="pageCadastro">
+    <div data-role="page" id="pageCadastro">
 		<div data-role="header" data-theme="b">
 			<h1>SERPRO GAME</h1>
 		</div>
+        <div style="background-color: #1a1a1a; height: 39px;">
+            <table width="100%" height: 100%; style="border-spacing:0;">
+                <tr>
+                    <td width="30px;">
+                        <img src="img/exclamacao.png" height="39px" style="padding:0 0 0 0; margin: 0 0 0 0;"/>
+                    </td>
+                    <td style="text-align: center; text-shadow: 0 0 0;">
+                        <b class="fontAmarela">Cadastre-se para participar</b>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="logo-consegi">
+            <div>
+                <img src="img/consegi-logo.png" />
+            </div>
+        </div>
+        
+        
 		<div data-role="content">
-			<form id="formCadastro">
-				<div data-role="fieldcontain">
-					<label for="nome">Nome</label> 
-					<input type="text" id="nome" required>
-				</div>
-				
-				<div data-role="fieldcontain">
-					<label for="email">E-mail</label>
-					<input type="email" id="email" required>
-				</div>
-				
-				<div data-role="fieldcontain">
-					<label for="telefone">Telefone</label> 
-					<input type="tel" id="telefone" required>
-				</div>
-				
-				<input type="button" id="btnCadastrar" value="Cadastrar" />
-			</form>
-		</div>
-	</div>
-
-	<div data-role="page" id="pageQRCodeInfo" data-theme="b" data-close-btn="none">
-		<div data-role="header" data-theme="b">
-			<h1>SERPRO GAME</h1>
-		</div>	
-		<div data-role="content">
-			<div id="textoInfo">xxxx</div>
-			<a href="#pageLista" data-role="button" data-rel="back" data-theme="c">Fechar</a>
-		</div>
-	</div>
-
-	<div data-role="page" id="pageQRCodeDesafio" data-theme="b" data-close-btn="none">
-		<div data-role="header" data-theme="b">
-			<h1>SERPRO GAME</h1>
-		</div>	
-		<div data-role="content">
-			<form id="formDesafio" action="#">
-			    <input type="hidden" id="qrCodeId"/>
-				<div id="pergunta">xxxx</div>				
-				<input type="text" id="resposta" required>
-				<input type="button" data-theme="b" id="responder" value="Responder"/>
-				<a href="#pageLista" data-role="button" data-rel="back" data-theme="c">Fechar</a>				
-			</form>
-		</div>
-	</div>
-		
-	<div data-role="page" id="pageQRCodeDesafioME" data-theme="b" data-close-btn="none">
-		<div data-role="header" data-theme="b">
-			<h1>SERPRO GAME</h1>
-		</div>	
-		<div data-role="content">
-			<form id="formDesafioME" action="#">
-			    <input type="hidden" id="qrCodeIdME"/>				
-				<fieldset data-role="controlgroup" id="grupoRadioButton"> 
-				<legend>Resposta:</legend>
-			     	<span id="alternativaASpan">
-			     	<input type="radio" name="respostaME" id="alternativaA" value="1" checked="checked" />
-			     	<label id="alternativaALabel" for="alternativaA" style="white-space:normal">Cat</label>
-					</span>
-					<span id="alternativaBSpan">
-			     	<input type="radio" name="respostaME" id="alternativaB" value="2" />
-			     	<label id="alternativaBLabel" for="alternativaB" style="white-space:normal">Cat</label>
-			     	</span>
-			     	<span id="alternativaCSpan">
-			     	<input type="radio" name="respostaME" id="alternativaC" value="3"  />
-			     	<label id="alternativaCLabel" for="alternativaC" style="white-space:normal">Cat</label>
-			     	</span>
-			     	<span id="alternativaDSpan">
-			     	<input type="radio" name="respostaME" id="alternativaD" value="4"  />
-			     	<label id="alternativaDLabel" for="alternativaD" style="white-space:normal">Cat</label>
-			     	</span>
-				</fieldset>
-				<input type="button" data-theme="b" id="responderME" value="Responder"/>
-				<a href="#pageLista" data-role="button" data-rel="back" data-theme="c">Fechar</a>	
-			</form>
-		</div>
-	</div>
+            <input type="text" id="nome" value="" placeholder="Nome"/>
+            <input type="text" id="sobrenome" value="" placeholder="Sobrenome"/>
+            <input type="text" id="email" value="" placeholder="E-mail"/>
+            <input type="text" id="telefone" value="" placeholder="Telefone"/>
+            
+            <a id="btnCadastrar" data-role="button" data-theme="qr-button"><span style="color: #b3b3b3;font-size: 16px; !important">CADASTRAR</span></a>
+            
+        </div>
+    </div>
     
 </body>
 
 <script>
 
 	var DOMINIO = "http://fislgames-exmo.rhcloud.com";
-    //var DOMINIO = "http://192.168.0.162:9000";//alert("MODO DESENVOLVIMENTO");
+    //var DOMINIO = "http://192.168.0.162:9000";
     
 	var MSG_SEM_INTERNET  = "Sem conexão internet." +
 							"Verifique sua configuração de rede e tente novamente mais tarde."
 
-	$(document).ready(function(){
-		console.log("document ready");
+
+    
+    var prevSelection = "tab1";
+    
+    function mudaTab(id){
+        var newSelection = $(id).attr("data-tab-class");
+        $("."+prevSelection).addClass("ui-screen-hidden");
+        $("."+newSelection).removeClass("ui-screen-hidden");
+        prevSelection = newSelection;
+    }
+    
+	$(document).ready(function (){
+        console.log("document ready");
+        // Configura as TABS
+        $("#navbar ul li.tabLink").click(function(){
+            mudaTab($(this));
+        });
+       
 		$("#btnCadastrar").click(submeterCadastro);	
 		$("#btLerQRCode").click(scan);
 		$("#responder").click(enviarResposta);
-		$("#responderME").click(enviarRespostaME);
-//		$("#pageLista").on("pagebeforeshow", function(event){ 
-//			//executa da primeira vez, quando usuario ainda nao tem cadastro
-//			if(!hasValue(lsGet("email"))){
-//				changePage("pageCadastro");
-//			}
-//		});	
 				
 		$("#pageCadastro").on("pagebeforeshow", function(event){ 
 			$("#email").val(lsGet("email"));
 			$("#nome").val(lsGet("nome"));
 			$("#telefone").val(lsGet("telefone"));
-		});		
+		});
+                      
+        $("#fechar").click(function(){
+            mudaTab($("#linkTab2"))
+        });
 	});
 		
-	$("#pageLista").on("pagebeforeshow", function(event){ 
+	$("#pageHome").on("pagebeforeshow", function(event){ 
 		//executa sempre
 		if(!hasValue(lsGet("email"))){
 			changePage("pageCadastro");
 		} else {
 			montaLista();
+            atualizarRankingPerfil();          
 		}
 	});	
 					
@@ -176,36 +276,81 @@
 		return window.localStorage.setItem(item,val);
 	}	
 
+    function atualizarRankingPerfil(){
+        console.log("Vai buscar o ranking");
+        var email = lsGet("email");
+        $.jsonp({
+            "url": DOMINIO+"/ranking/json/"+email+"?callback=?",
+            "success": function(response, textStatus) {
+                console.log("Obteve o JSON de ranking para o email: "+email);
+                $.mobile.loading('hide');
+                if (response.status == "ERROR") {
+                    alert(response.msgRet);
+                }else{
+                    var usuario = response.usuario;
+                    var ranking = response.ranking;
+                    // Tela de Perfil
+                    $("#spanNome").html(usuario.nome.split(" ")[0]);
+                    $("#spanSobrenome").html(usuario.nome.split(" ")[1]);
+                    $("#spanPosicao").html(usuario.posicao);
+                    $("#pontuacao").html(usuario.pontos);
+                    $("#spanEmail").html(usuario.email);
+                    $("#spanPercentual").html(usuario.progresso);
+                
+                    $("#percentualProgresso").attr("width",usuario.progresso+"%");
+                
+                    // Tela de Ranking
+                    $("#rankingPosicao").html(usuario.posicao);
+                    $("#rankingPontuacao").html(usuario.pontos);
+                
+                    $("#tabelaRanking").empty();
+                    $.each(ranking,function(i,qr){
+                           console.log(qr.toString());
+                        $("#tabelaRanking").append("<tr><td class='posicao'>"+ (i+1) +"º</td><td class='nome'>"+qr.nome+"</td><td class='total'>"+qr.pontos+"</td></tr>");
+                    });
+                
+                }
+            },
+            "error": function(xOptions, textStatus) {
+                console.log("Falha ao tentar obter o Ranking");
+                $.mobile.loading('hide');
+                alert("Ocorreu um erro na consulta ao Ranking. " + MSG_SEM_INTERNET);
+            }
+        });
+        
+    }
+    
 	function montaLista() {
 		var total = 0;
 		var email = lsGet("email");
 		var nome = lsGet("nome");
-		$("#listaQRCode").empty();
+		$("#tabelaQRcode").empty();
 		listQRCode(function(lista){
 			var bubblePontosStyle = "";
+			var total = 0;
 			$.each(lista,function(i,qr){	
-				var status = "";
+				var status = "semresposta";
 				var pontos = "";
-				var bubbleStyle = "";
+				
 				if (qr.tipo == 'DESAFIO' || qr.tipo == 'DESAFIOME') {
 					pontos = qr.pontos;
 					if (qr.acertou != null) {
 						if (qr.acertou == 'true') { // desafio resposta certa: verde
-							total += pontos; 
-							bubbleStyle = "style=\"background: #00FF00;\"";
-							bubblePontosStyle = bubbleStyle;
+							total+= qr.pontos;
+							status = "correto";
 						} else { // desafio resposta errada: vermelho
-							bubbleStyle = "style=\"color: #FFFFFF; background: #FF0000;\"";
+							status = "errado";
 						}
 					}
 				} else { // info, url: azul
-					bubbleStyle = "style=\"color: #FFFFFF; background: #0000FF;\"";
-					pontos = qr.tipo.toLowerCase();
+					status = "info";
+                   pontos = "i";//qr.tipo.substring(0,1).toLowerCase();
 				} 				
-				var bubblePontos = "<span class=\"ui-li-count\""+bubbleStyle+">"+pontos+"</span>";
-				$("#listaQRCode").append("<li style=\"white-space:normal\"><a class=\"changepage\" onclick='exibirQRCodeInfo("+qr.id+")' href='#'>"+qr.texto+status+bubblePontos+"</a></li>").listview('refresh');
+                $("#tabelaQRcode").append("<tr onclick='exibirQRCodeInfo("+qr.id+")'><td class='"+status+"'>"+pontos+"</td><td class='pergunta'>"+qr.texto+"</td><td class='seta'><img src=\"img/seta.png\" /></td></tr>");
 			});
-			$("#listaQRCode").append("<li data-theme=\"c\" data-role=\"list-divider\">&nbsp;"+nome+"&nbsp;&lt;"+email+"&gt;"+"<span class=\"ui-li-count\""+bubblePontosStyle+">Pontos: "+total+"</span></li>").listview('refresh');
+			
+			$("#pontuacao").html(total);
+			
 		});			
 	}    
 
@@ -239,7 +384,7 @@
 			}
 
             salvarQRCode(texto);
-                                           
+                                        
 		}, function(error) {
             console.log(error);
 			alert("Ocorreu um erro na leitura do QR-Code. Tenta novamente.");
@@ -291,22 +436,22 @@
 	
 	function exibirQRCodeInfo(id){
         console.log("Obtendo o QRCode: "+id);
+        montaLista();
 		getQRCodeById(id,function(qrCode){
-			
             console.log("Montando a tela para exibir o QRCode: "+qrCode.tipo);
-                      
+            $("#qrCodeId").val(qrCode.id);          
 			if(qrCode.tipo == 'DESAFIO' ){
 				$("#pergunta").text(qrCode.texto);
-				$("#qrCodeId").val(qrCode.id);
-				showDialog("pageQRCodeDesafio");
+                $("#responder").show();
+                $("#resposta").show();
+                $("#pergunta").show();
+                $("#grupoRadioButton").hide();
+                      
 			}else if(qrCode.tipo == 'DESAFIOME' ){
-
-				$("#qrCodeIdME").val(qrCode.id);
-				
-				var alternativasContainer = $("#formDesafioME");
+				var alternativasContainer = $("#tab5");
 				var fieldset = $("#grupoRadioButton");
 				fieldset.html("");
-				fieldset.append( $('<legend>').html(qrCode.texto) );
+				$("#pergunta").text(qrCode.texto);
 				
                 var alternativas = qrCode.alternativas.split("#");
                 alternativas = shuffle(alternativas);
@@ -324,26 +469,31 @@
                 }
 				
 				alternativasContainer.trigger('create');
-				showDialog("pageQRCodeDesafioME");
+
+                      $("#responder").show();
+                      $("#resposta").hide();
+                      $("#pergunta").show();
+                      $("#grupoRadioButton").show();
 				
 			}else if(qrCode.tipo == 'INFO'){
-				$("#textoInfo").text(qrCode.texto);
-				showDialog("pageQRCodeInfo");
+                      $("#pergunta").text(qrCode.texto);
+                      $("#responder").hide();
+                      $("#resposta").hide();
+                      $("#pergunta").show();
+                      $("#grupoRadioButton").hide();
 			}else if(qrCode.tipo == 'URL'){
 				window.open(encodeURI(qrCode.texto), '_system');
-				montaLista(); //recarrega a lista
 			}
+                      
+            if(qrCode.tipo != 'URL'){
+                mudaTab($("#linkTab5"));
+            }
+                      
 		});
 	}
 
 	function checkInternet() {
-		var networkState = null;
-		
-		if(navigator.connection){
-			networkState = navigator.connection.type;	
-		}else{
-			networkState = navigator.network.connection.type;
-		}
+	    var networkState = navigator.connection.type;
 
 	    if (networkState == 'undefined' || networkState == Connection.NONE) {
 	    	alert(MSG_SEM_INTERNET);
@@ -353,10 +503,22 @@
 	}
 	
 	function enviarResposta(){
-		if (!hasValue($("#resposta").val())) {
-			alert("Preencha a resposta!");
-			return false;
-		}
+        var resposta = $("#resposta").val();
+        
+        if($("#resposta").is(':visible')){
+            if (!hasValue(resposta)) {
+                alert("Preencha a resposta!");
+                return false;
+            }
+        }
+        
+        if($("#grupoRadioButton").is(':visible')){
+            resposta = $('input[name=respostaME]:checked').val();
+            if (!hasValue(resposta)) {
+                alert("Escolha uma alternativa");
+                return false;
+            }
+        }
 
 		if (!checkInternet()) {
 			return false;	
@@ -365,42 +527,6 @@
 		 $.mobile.loading('show');
 
 		var qrId = $("#qrCodeId").val();
-		$.jsonp({
-	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+$("#resposta").val()+"?callback=?",
-	        "success": function(response, textStatus) {
-	        	 $.mobile.loading('hide');
-	        	if (response.status = "OK") {	        		
-        			alert(response.msgRet);
-        			if (response.codRet == "OK") {
-	        			updateQRCode(qrId, true);
-					} else if (response.codRet == "ERRO-RE") {
-						updateQRCode(qrId, false);
-					}
-	        	}
-	        	$("#resposta").val("");
-	        	changePage("pageLista");
-	        },
-	        "error": function(xOptions, textStatus) {
-	        	 $.mobile.loading('hide');
-	        	alert("Ocorreu um erro no Envio da Resposta. " + MSG_SEM_INTERNET);
-	        }
-	    });
-	}
-	
-	function enviarRespostaME(){
-		var resposta = $('input[name=respostaME]:checked').val();
-		if (!hasValue(resposta)) {
-			alert("Escolha uma alternativa");
-			return false;
-		}
-		
-		if (!checkInternet()) {
-			return false;	
-		}
-		
-        $.mobile.loading('show');
-		var qrId = $("#qrCodeIdME").val();		
-		
 		$.jsonp({
 	    	"url": DOMINIO+"/desafio/"+qrId+"/"+ localStorage.email +"/"+resposta+"?callback=?",
 	        "success": function(response, textStatus) {
@@ -413,18 +539,24 @@
 						updateQRCode(qrId, false);
 					}
 	        	}
-	        	changePage("pageLista");
+	        	$("#resposta").val("");
+                
+                atualizarRankingPerfil();
+                
+                // vai para a lista de QRCodes
+                montaLista();
+	        	mudaTab($("#linkTab2"));
 	        },
 	        "error": function(xOptions, textStatus) {
-                $.mobile.loading('hide');
-				alert("Ocorreu um erro no Envio da Resposta " + MSG_SEM_INTERNET);
+	        	 $.mobile.loading('hide');
+	        	alert("Ocorreu um erro no Envio da Resposta. " + MSG_SEM_INTERNET);
 	        }
 	    });
-	}	
+	}
 	
 	function submeterCadastro() {
         console.log("Submetendo cadastro");
-		if ($("#nome").val() == "" || $("#email").val() == "" || $("#telefone").val() == "") {
+		if ($("#nome").val() == "" || $("#sobrenome").val() == "" || $("#email").val() == "" || $("#telefone").val() == "") {
 			alert("Preencha todas as informações");
 			return false;
 		}
@@ -440,7 +572,7 @@
         
         $.mobile.loading('show');
 		
-		var url = DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+"/"+$("#telefone").val()+"?callback=?";
+		var url = DOMINIO+"/usuario/criar/"+$("#email").val()+"/"+$("#nome").val()+" "+$("#sobrenome").val()+"/"+$("#telefone").val()+"?callback=?";
 	
         console.log(url);
         
@@ -453,9 +585,10 @@
 	        	} else {
 			      	lsSet("email",$("#email").val());
 		      		lsSet("nome",$("#nome").val());
+                    lsSet("sobrenome",$("#sobrenome").val());
 		      		lsSet("telefone",$("#telefone").val());
 				}			      	
-		      	changePage("pageLista");
+		      	changePage("pageHome");
 	        },
 	        "error": function(xOptions, textStatus) {
                 $.mobile.loading('hide');
@@ -475,7 +608,9 @@
         for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
             return o;
     }
-                      
+
+        
+    
 </script>
 <script src="js/db.js"></script>
 
