@@ -107,6 +107,7 @@
         <plugin
             name="BarcodeScanner"
             value="com.phonegap.plugins.barcodescanner.BarcodeScanner" />
+        <plugin name="WebIntent" value="com.borismus.webintent.WebIntent" />
     </plugins>
 
 </cordova>
