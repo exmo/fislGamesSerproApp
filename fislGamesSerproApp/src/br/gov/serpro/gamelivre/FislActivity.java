@@ -1,4 +1,4 @@
-package br.gov.serpro.fisl;
+package br.gov.serpro.gamelivre;
 
 import android.os.Bundle;
 import org.apache.cordova.DroidGap;
